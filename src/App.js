@@ -1,24 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import { useState } from "react";
+import PreLoad from "./includes/PreLoad";
+import { getLocalStorageJWT } from "./context/storaje";
+import { Route, Routes } from "react-router-dom";
+import Login from "./modules/login/Login";
+import Reigister from "./modules/register/Reigister";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+  const [isLoged, setIsLoged] = useState(false);
+  const [load, setLoad] = useState(true);
+
+  const getInfoUsuario = async () => {
+    if (getLocalStorageJWT() != "") {
+      setIsLoged(true);
+    }
+  };
+
+  useEffect(() => {
+    setLoad(true);
+
+    getInfoUsuario().then(
+      setTimeout(() => {
+        setLoad(false);
+      }, 1000)
+    );
+  }, []);
+
+  return load ? (
+    <PreLoad />
+  ) : isLoged ? (
+    <>acceso al administrador de contraseñas</>
+  ) : (
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="registrar" element={<Reigister />} />
+    </Routes>
   );
 }
 
