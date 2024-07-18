@@ -5,6 +5,17 @@ import { getLocalStorageJWT } from "./context/storaje";
 import { Route, Routes } from "react-router-dom";
 import Login from "./modules/login/Login";
 import Reigister from "./modules/register/Reigister";
+import Menu from "./includes/Menu";
+
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import NotFound from "./includes/NotFound";
+
+const darkTheme = createTheme({
+  palette: {
+    mode: "dark",
+  },
+});
 
 function App() {
   const [isLoged, setIsLoged] = useState(false);
@@ -29,11 +40,14 @@ function App() {
   return load ? (
     <PreLoad />
   ) : isLoged ? (
-    <>acceso al administrador de contraseñas</>
+    <ThemeProvider theme={darkTheme}>
+      <Menu />
+    </ThemeProvider>
   ) : (
     <Routes>
       <Route path="/" element={<Login />} />
-      <Route path="registrar" element={<Reigister />} />
+      <Route path="registrar/*" element={<Reigister />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
