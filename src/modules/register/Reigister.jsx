@@ -8,22 +8,22 @@ import {
   Snackbar,
 } from "@mui/material";
 import React, { useState } from "react";
-import { json } from "react-router-dom";
+import { json, Link } from "react-router-dom";
 import { BACKEND_URL } from "../../context/backend";
 
 export default function Reigister() {
   const [Values, setValues] = useState({
-    Correo: "",
-    Contraseña: "",
+    Usuario: "",
+    Contrasena: "",
     Nombre: "",
   });
 
   const [IsLoading, setIsLoading] = useState(false);
 
   const [Errores, setErrores] = useState({
-    CorreoError: false,
-    ContraseñaError: false,
-    NombreError: false,
+    Usuario: false,
+    Contrasena: false,
+    Nombre: false,
   });
 
   const [mensaje, setMensaje] = useState("");
@@ -37,42 +37,40 @@ export default function Reigister() {
       [target.name]: target.value,
     });
 
-    if (!Values.Correo || Values.Correo == "") {
-      setErrores({ ...Errores, CorreoError: true });
-      return;
-    }
-
-    if (!Values.Contraseña || Values.Contraseña == "") {
-      setErrores({ ...Errores, ContraseñaError: true });
-      return;
-    }
-
-    if (!Values.Nombre || Values.Nombre == "") {
-      setErrores({ ...Errores, NombreError: true });
-      return;
-    }
-
     setErrores({ ...Errores, [target.name]: false });
   };
 
   const registrar = () => {
-    // if (
-    //   Errores.ContraseñaError ||
-    //   Values.Contraseña == "" ||
-    //   Errores.CorreoError ||
-    //   Values.Correo == "" ||
-    //   Errores.NombreError ||
-    //   Values.Nombre == ""
-    // ) {
-    //   return;
-    // }
+    let error = false;
+
+    if (!Values.Usuario || Values.Usuario == "") {
+      Errores.Usuario = true;
+      error = true;
+    }
+
+    if (!Values.Contrasena || Values.Contrasena == "") {
+      Errores.Contrasena = true;
+      error = true;
+    }
+
+    if (!Values.Nombre || Values.Nombre == "") {
+      Errores.Nombre = true;
+      error = true;
+    }
+
+    if (error) {
+      setMensaje("Ingresa todos los campos");
+      setOpen(true);
+      setErrores(Errores);
+      return;
+    }
 
     setIsLoading(true);
 
     const body = {
       name: Values.Nombre,
       user: Values.Correo,
-      password: Values.Contraseña,
+      password: Values.Contrasena,
     };
 
     fetch(`${BACKEND_URL}usuarios/registrar`, {
@@ -154,7 +152,7 @@ export default function Reigister() {
       >
         <CardContent>
           <TextField
-            error={Errores.NombreError}
+            error={Errores.Nombre}
             fullWidth
             id="Nombre"
             name="Nombre"
@@ -165,26 +163,26 @@ export default function Reigister() {
           />
 
           <TextField
-            error={Errores.CorreoError}
+            error={Errores.Usuario}
             fullWidth
             id="Usuario"
-            name="Correo"
+            name="Usuario"
             label="Usuario"
             variant="outlined"
-            value={Values.Correo}
+            value={Values.Usuario}
             onChange={handlInputChange}
             className="mt-3"
           />
           <TextField
             fullWidth
-            error={Errores.ContraseñaError}
-            id="Contraseña"
-            name="Contraseña"
+            error={Errores.Contrasena}
+            id="Contrasena"
+            name="Contrasena"
             label="Contraseña"
             variant="outlined"
             className="mt-3"
             type="password"
-            value={Values.Contraseña}
+            value={Values.Contrasena}
             onChange={handlInputChange}
           />
           <Button
@@ -202,6 +200,12 @@ export default function Reigister() {
               Registrarse
             </Typography>
           </Button>
+
+          <Typography className="text-center mt-4">
+            <Link to={"/"} style={{ textDecoration: "none", color: "#000000" }}>
+              Regresar
+            </Link>
+          </Typography>
         </CardContent>
       </Card>
     </div>

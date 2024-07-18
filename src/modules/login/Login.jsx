@@ -89,8 +89,8 @@ export default function Login() {
           if (response.codigo == 200) {
             console.log(response);
 
-            //setLocalStorageJWT(response.data[0].token);
-            //setLocalStorage("nombre", response.data[0].nombre);
+            setLocalStorageJWT(response.data.token);
+            setLocalStorage("nombre", response.data.nombre);
 
             //window.location.reload();
           } else {
