@@ -30,6 +30,40 @@
 
 <br>
 
+### Instrucciones para servidor local de compilaodo persistente en Windows
+
+<br>
+
+Paso 1: instalar los recursos necesarios
+
+```bash
+npm install pm2-windows-startup -g
+```
+
+```bash
+npm install -g pm2
+```
+
+Paso 2: inicializar el entorno (estar ubicado en la carpeta del proyecto)
+
+```bash
+pm2 start ecosystem.config.js --env prod
+```
+
+```bash
+pm2-startup install
+```
+
+```bash
+pm2 save
+```
+
+Eliminar procesos (eso solo en caso que ya no sea requerido que sea persistente)
+
+```bash
+pm2-startup uninstall
+```
+
 ## Creadores
 
 - [MrLoop15](https://github.com/Mrloop15)
