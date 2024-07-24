@@ -17,6 +17,7 @@ import ListOptions from "./ListOptions";
 import { Route, Routes } from "react-router-dom";
 import { getLocalStorage } from "../context/storaje";
 import NotFound from "./NotFound";
+import PlataformasRoutes from "../modules/plataformas/plataformas.routes";
 
 const drawerWidth = 240;
 
@@ -162,6 +163,7 @@ export default function Menu() {
           <DrawerHeader />
           <Routes>
             <Route path="/" element={<>asdasd</>} />
+            <Route path="/plataformas/*" element={<PlataformasRoutes />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Box>

@@ -30,7 +30,7 @@
 
 <br>
 
-### Instrucciones para servidor local de compilaodo persistente en Windows
+### Instrucciones para servidor local de compilado persistente en Windows
 
 <br>
 

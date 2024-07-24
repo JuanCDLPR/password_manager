@@ -87,12 +87,13 @@ export default function Login() {
           //console.log(response);
           setOpenLoading(false);
           if (response.codigo == 200) {
-            console.log(response);
+            //console.log(response);
 
             setLocalStorageJWT(response.data.token);
-            setLocalStorage("nombre", response.data.nombre);
+            setLocalStorage("nombre", response.data.name);
+            setLocalStorage("user", response.data.user);
 
-            //window.location.reload();
+            window.location.reload();
           } else {
             setMensaje(response.mensaje);
             setOpen(true);

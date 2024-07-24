@@ -69,7 +69,7 @@ export default function Reigister() {
 
     const body = {
       name: Values.Nombre,
-      user: Values.Correo,
+      user: Values.Usuario,
       password: Values.Contrasena,
     };
 
@@ -191,6 +191,7 @@ export default function Reigister() {
             size="large"
             className="btn-Crexendo mt-4"
             onClick={registrar}
+            disabled={IsLoading}
           >
             <Typography
               style={{

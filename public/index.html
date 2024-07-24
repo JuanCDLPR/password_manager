@@ -16,6 +16,7 @@
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <link rel="stylesheet" href="%PUBLIC_URL%/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="%PUBLIC_URL%/css/hamster.css" />
 
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
@@ -42,4 +43,123 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
   </body>
+  <style>
+    .btn-create {
+      height: 50px;
+      margin: 5px;
+      background: #333;
+      -webkit-box-pack: center;
+      -ms-flex-pack: center;
+      justify-content: center;
+      cursor: pointer;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      border: solid #404c5d 1px;
+      font-size: 16px;
+      color: rgb(231, 223, 223);
+      -webkit-transition: 500ms;
+      transition: 500ms;
+      border-radius: 5px;
+      background: linear-gradient(145deg, #2e2d2d, #212121);
+      -webkit-box-shadow: -1px -5px 15px #41465b, 5px 5px 15px #41465b,
+        inset 5px 5px 10px #212121, inset -5px -5px 10px #212121;
+      box-shadow: -1px -5px 15px #41465b, 5px 5px 15px #41465b,
+        inset 5px 5px 10px #212121, inset -5px -5px 10px #212121;
+      text-transform: none;
+    }
+
+    .btn-create:hover {
+      -webkit-box-shadow: 1px 1px 13px #20232e, -1px -1px 13px #545b78;
+      box-shadow: 1px 1px 13px #20232e, -1px -1px 13px #545b78;
+      color: #d6d6d6;
+      -webkit-transition: 500ms;
+      transition: 500ms;
+    }
+
+    .btn-create:active {
+      -webkit-box-shadow: 1px 1px 13px #20232e, -1px -1px 33px #545b78;
+      box-shadow: 1px 1px 13px #20232e, -1px -1px 33px #545b78;
+      color: #d6d6d6;
+      -webkit-transition: 100ms;
+      transition: 100ms;
+    }
+
+    .custom-button {
+      background-color: rgb(162, 153, 153);
+      width: 200px; /* 48 * 4px */
+      height: 36px; /* 14 * 4px */
+      border-radius: 30px; /* 2xl */
+      position: relative;
+      font-family: sans-serif;
+      color: black;
+      font-size: 20px; /* xl */
+      font-weight: 600; /* semibold */
+      text-align: center;
+      border: none;
+      cursor: pointer;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .indicator {
+      background-color: #000000; /* verde */
+      border-radius: 20px; /* xl */
+      height: 28px; /* 12 * 4px */
+      width: 25%; /* 1/4 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      left: 8px; /* 1px */
+      top: 4px; /* 4px */
+      z-index: 10;
+      transition: width 0.5s ease;
+    }
+
+    .custom-button:hover .indicator {
+      width: 184px; /* 184px */
+    }
+
+    .button-text {
+      transform: translateX(8px); /* translate-x-2 */
+      margin: 0;
+      margin-left: 20px;
+    }
+
+    .btn-cancel {
+      height: 50px;
+      margin: 5px;
+      background: #333;
+      -webkit-box-pack: center;
+      -ms-flex-pack: center;
+      justify-content: center;
+      cursor: pointer;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      border: solid #753b3b 1px;
+      font-size: 16px;
+      color: rgb(231, 223, 223);
+      transition: 500ms;
+      border-radius: 5px;
+      background: linear-gradient(145deg, #2e2d2d, #212121);
+
+      box-shadow: -1px -5px 15px #6c4a46, 5px 5px 15px #502727,
+        inset 5px 5px 10px #6c4a46, inset -5px -5px 10px #975353;
+      text-transform: none;
+    }
+
+    .btn-cancel:hover {
+      box-shadow: 1px 1px 13px #2e2020, -1px -1px 13px #c24040;
+      color: #d6d6d6;
+      transition: 500ms;
+    }
+
+    .btn-cancel:active {
+      box-shadow: 1px 1px 13px #20232e, -1px -1px 33px #545b78;
+      color: #d6d6d6;
+      transition: 100ms;
+    }
+  </style>
 </html>
