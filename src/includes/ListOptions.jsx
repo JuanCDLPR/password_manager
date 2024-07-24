@@ -18,11 +18,35 @@ import { Link } from "react-router-dom";
 import { clearStorageJWT } from "../context/storaje";
 import { Tooltip } from "@mui/material";
 
-export default function ListOptions({ open }) {
-  const CerrarSesion = () => {
-    clearStorageJWT();
-  };
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
 
+const MySwal = withReactContent(Swal);
+export default function ListOptions({ open }) {
+  const CerrarSesion = () =>
+    MySwal.fire({
+      title: "¿Estas seguro de cerrar sesión?",
+      icon: "warning",
+      showDenyButton: true,
+      denyButtonText: "No, cancelar",
+      confirmButtonText: "Si, estoy seguro",
+      confirmButtonColor: "#3ABE88",
+      denyButtonColor: "#65748B",
+      reverseButtons: true,
+      background: "#333333",
+      color: "#FFFFFF",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        MySwal.fire({
+          icon: "success",
+          title: "Cerrando sesión...",
+          showConfirmButton: false,
+          timer: 1500,
+          background: "#333333",
+          color: "#FFFFFF",
+        }).then(clearStorageJWT);
+      }
+    });
   return (
     <>
       <List>
