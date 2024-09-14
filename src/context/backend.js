@@ -88,3 +88,47 @@ export const getData = async (url) => {
       };
     });
 };
+
+export function postUrl(url) {
+  let bearer_token = getLocalStorageJWT();
+  return fetch(BACKEND_URL + url, {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer " + bearer_token,
+      "Content-Type": "application/json",
+      Administracion: bearer_token,
+    },
+  })
+    .then((response) => {
+      if (response.status === 401) {
+        clearStorageJWT();
+      }
+      if (response.status != 200) {
+        console.log(response);
+        return {
+          resp: {
+            codigo: String(response.status),
+            mensaje: "Error: " + response.statusText,
+          },
+        };
+      }
+      return response.json();
+    })
+    .then((response) => {
+      if (response.codigo == 200) {
+        return { error: false, data: response };
+      } else {
+        return {
+          error: true,
+          mensaje: response.mensaje + " (" + response.codigo + ")",
+        };
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      return {
+        error: true,
+        mensaje: "Error al conectar con los servidores (503)",
+      };
+    });
+}

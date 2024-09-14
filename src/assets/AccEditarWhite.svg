@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="17px" height="17px" viewBox="0 0 17 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>12.1 AccEditar</title>
+    <g id="FACTURACION" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="4.1-Series" transform="translate(-1321.000000, -358.000000)">
+            <g id="F1" transform="translate(266.000000, 329.000000)">
+                <g id="Group-7" transform="translate(1056.000000, 28.000000)">
+                    <g id="12.1-AccEditar" transform="translate(0.000000, 1.672416)">
+                        <path d="M14.0067044,8.32404787 L14.0067044,13.2260451 C14.0067044,14.3867445 13.065865,15.3275839 11.9055333,15.3275839 L2.1011711,15.3275839 C0.940839344,15.3275839 0,14.3867445 0,13.2260451 L0,3.42205062 C0,2.2613512 0.940839344,1.32051186 2.1011711,1.32051186 L7.00316836,1.32051186" id="Stroke-1" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"></path>
+                        <path d="M8.72443128,10.2005426 L6.12700455,10.2005426 L6.12700455,7.60311584 L12.5172848,0.538018487 C13.2346428,-0.179339496 14.3976323,-0.179339496 15.1149902,0.538018487 C15.8323482,1.25537647 15.8323482,2.41808723 15.1149902,3.13544521 L8.72443128,10.2005426 Z" id="Fill-3" fill="#FFFFFF"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

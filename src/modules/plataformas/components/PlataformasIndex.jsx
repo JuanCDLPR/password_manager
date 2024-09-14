@@ -1,15 +1,37 @@
 import { Button, Card, Container, IconButton, Stack } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 
 import Buscador from "../../../includes/Buscador";
 import SelectOrdenamiento from "../../../includes/SelectOrdenamiento";
 import { Link } from "react-router-dom";
+import { getLista } from "../functions/plataformas";
+import Tabla from "./Tabla";
 
 export default function PlataformasIndex() {
   const [IsLoading, setIsLoading] = useState(false);
   const [ValueBusqueda, setValueBusqueda] = useState("");
   const [ValueSelect, setValueSelect] = useState("1");
+  const [Lista, setLista] = useState([]);
+
+  const getListaCliente = () => {
+    setIsLoading(true);
+    getLista(ValueBusqueda, ValueSelect)
+      .then((resp) => {
+        //console.log(resp);
+        setLista(resp);
+      })
+      .catch((resp) => {
+        setLista([]);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    getListaCliente();
+  }, [ValueBusqueda, ValueSelect]);
 
   return (
     <>
@@ -83,7 +105,11 @@ export default function PlataformasIndex() {
           </Row>
           <Row>
             <Col sm={12}>
-              <>tabla</>
+              <Tabla
+                Lista={Lista ?? []}
+                IsLoading={IsLoading}
+                setLista={setLista}
+              />
             </Col>
           </Row>
         </Card>

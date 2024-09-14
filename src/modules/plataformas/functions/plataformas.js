@@ -1,4 +1,5 @@
-import { postdData } from "../../../context/backend";
+import { getData, postdData, postUrl } from "../../../context/backend";
+import { stringify } from "../../../lib/GeneralesImports";
 
 export const guardar = async (
   Values = {},
@@ -40,5 +41,61 @@ export const guardar = async (
     }
   } catch (e) {
     console.log(e);
+  }
+};
+
+export const getLista = async (
+  query,
+  Order = 1 /*, iTake = 5, iSkip = 0, */
+) => {
+  //onsole.log(query)
+  /*  if (Order != "1" && query != "") {
+    Order = "1";
+  } */
+
+  let data = [];
+  let queryParamsObj = {
+    Order: Order,
+    query: query,
+  };
+
+  //console.log(queryParamsObj);
+  const url = `plataformas/listar?${stringify(queryParamsObj)}`;
+  //const url = `clientes/listar`;
+  const res = await getData(url);
+  //console.log(res);
+  return new Promise((resolve, reject) => {
+    if (!res.error) {
+      //console.log(res.data);
+      data = res.data;
+      resolve(data);
+    } else {
+      reject(res);
+    }
+  });
+};
+
+export const Eliminar = async (id) => {
+  if (id != undefined) {
+    let data = [];
+    let queryParamsObj = {
+      ID: id,
+    };
+    const url = `plataformas/eliminar?${stringify(queryParamsObj)}`;
+    const res = await postUrl(url);
+    //const res = { error: false, data: { codigo: "201", mensaje: "okey" } };
+
+    return new Promise((resolve, reject) => {
+      if (!res.error) {
+        data = res.data;
+        resolve(data);
+      } else {
+        reject(res);
+      }
+    });
+  } else {
+    return new Promise((resolve, reject) => {
+      resolve({ mensaje: "No se pudo obtener el identificador" });
+    });
   }
 };
