@@ -99,3 +99,39 @@ export const Eliminar = async (id) => {
     });
   }
 };
+
+export const getInfoPlataforma = async (id) => {
+  let data = [];
+  let queryParamsObj = {
+    ID: id,
+  };
+  const url = `plataformas/consultar?${stringify(queryParamsObj)}`;
+  const res = await getData(url);
+  //console.log(res);
+  return new Promise((resolve, reject) => {
+    if (!res.error) {
+      data = res.data;
+
+      if (data[0].length === 0) {
+        resolve({
+          err: [],
+          mensaje: "No se encontró información de esta plataforma",
+        });
+      } else {
+        data = data[0];
+        //console.log(data);
+        //console.log(res.data[1]);
+        let Values = {
+          id: data._id,
+          nombre: data.name,
+          url: data.url,
+        };
+        resolve({ Values });
+      }
+    } else {
+      reject({
+        mensaje: "Error al conectar a internet, revisa tu conexion a internet",
+      });
+    }
+  });
+};

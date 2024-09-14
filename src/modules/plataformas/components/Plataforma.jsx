@@ -18,7 +18,7 @@ import { Col, Row } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ButtonBack from "../../../includes/ButtonBack";
-import { guardar } from "../functions/plataformas";
+import { getInfoPlataforma, guardar } from "../functions/plataformas";
 import AvatarDefault from "../../../includes/AvatarDefault";
 
 import withReactContent from "sweetalert2-react-content";
@@ -33,14 +33,6 @@ export default function Plataforma() {
   const [IsGuardando, setIsGuardando] = useState(false);
   const [open, setOpen] = useState(false);
   const [mensaje, setMensaje] = useState("");
-
-  const [notLoadAvatar, setNotLoadAvatar] = useState(false);
-
-  const [selectedFile, setSelectedFile] = useState(null);
-
-  const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
-  };
 
   const [Values, setValues] = useState({
     id: id ?? "0",
@@ -114,11 +106,54 @@ export default function Plataforma() {
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-  }, []);
+    setIsLoading(true);
 
+    if (id != undefined) {
+      getInfoPlataforma(id)
+        .then((resp) => {
+          //console.log(resp);
+          if (resp?.err?.length == 0) {
+            MySwal.fire({
+              title: "Error",
+              html: resp.mensaje,
+              icon: "error",
+              confirmButtonColor: "#3ABE88",
+              showConfirmButton: true,
+              allowEscapeKey: false,
+              allowEnterKey: false,
+              allowOutsideClick: false,
+              background: "#333333",
+              color: "#FFFFFF",
+            }).then(() => {
+              navigate(-1);
+            });
+          } else {
+            setValues(resp.Values);
+          }
+        })
+        .catch((resp) => {
+          MySwal.fire({
+            title: "Error",
+            html: resp.mensaje,
+            icon: "error",
+            confirmButtonColor: "#3ABE88",
+            showConfirmButton: true,
+            allowEscapeKey: false,
+            allowEnterKey: false,
+            allowOutsideClick: false,
+            background: "#333333",
+            color: "#FFFFFF",
+          }).then(() => {
+            navigate(-1);
+          });
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      setIsLoading(false);
+    }
+  }, []);
   const StyledSnackbar = styled((props) => <Snackbar {...props} />)(
     ({ theme }) => ({
       "& .MuiSnackbar-root": {
