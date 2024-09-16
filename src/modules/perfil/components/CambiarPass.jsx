@@ -1,5 +1,6 @@
 import { LoadingButton } from "@mui/lab";
 import {
+  Alert,
   Button,
   Card,
   CardActions,
@@ -10,23 +11,32 @@ import {
 import React, { useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { MySwal, StyledSnackbar } from "../../../lib/GeneralesImports";
+import { update_pass } from "../functions/perfil";
+import { setLocalStorageJWT } from "../../../context/storaje";
 
 export default function CambiarPass() {
   const navigate = useNavigate();
   const [IsLoading, setIsLoading] = useState(false);
   const [IsGuardando, setIsGuardando] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [mensaje, setMensaje] = useState("");
 
   const [Values, setValues] = useState({
-    nombre: "",
-    usuario: "",
-    url: "",
+    pass: "",
+    rep_pass: "",
+    old_pass: "",
   });
 
   const [Errores, setErrores] = useState({
-    nombre: false,
-    usuario: false,
-    url: false,
+    pass: false,
+    rep_pass: false,
+    old_pass: false,
   });
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const handlInputChange = ({ target }) => {
     const Name = target.name;
@@ -43,8 +53,53 @@ export default function CambiarPass() {
     });
   };
 
+  const Guardar = () => {
+    setIsGuardando(true);
+    update_pass(Values, Errores, setErrores)
+      .then((data) => {
+        if (data.codigo == 200) {
+          setIsGuardando(false);
+          MySwal.fire({
+            title: "Correcto",
+            html: data.mensaje,
+            icon: "success",
+            confirmButtoColor: "#3ABE88",
+            showConfirmButton: false,
+            timer: 12700,
+            background: "#333333",
+            color: "#FFFFFF",
+          }).then((result) => {
+            if (data.data[0]) {
+              setLocalStorageJWT(data.data[0]);
+            }
+            navigate(-1);
+          });
+        } else {
+          setMensaje(data.mensaje);
+          setOpen(true);
+          setIsGuardando(false);
+        }
+      })
+      .catch((data) => {
+        setMensaje(data.mensaje);
+        setOpen(true);
+        setIsGuardando(false);
+      });
+  };
+
   return (
     <>
+      <StyledSnackbar
+        direction="right"
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
+          {mensaje}
+        </Alert>
+      </StyledSnackbar>
       <Card>
         <CardContent>
           <Row>
@@ -52,30 +107,36 @@ export default function CambiarPass() {
               <TextField
                 label="Contraseña actual"
                 fullWidth
-                name="nombre"
-                value={Values.nombre}
-                error={Errores.nombre}
+                name="old_pass"
+                value={Values.old_pass}
+                error={Errores.old_pass}
                 onChange={handlInputChange}
+                type="password"
+                helperText={Errores.old_pass ? "Completar campo" : ""}
               />
             </Col>
             <Col xs={4} className="p-3">
               <TextField
                 label="Nueva contraseña"
                 fullWidth
-                name="usuario"
-                value={Values.usuario}
-                error={Errores.usuario}
+                name="pass"
+                value={Values.pass}
+                error={Errores.pass}
                 onChange={handlInputChange}
+                type="password"
+                helperText={Errores.pass ? "Completar campo" : ""}
               />
             </Col>
             <Col xs={4} className="p-3">
               <TextField
                 label="Repite contraseña"
                 fullWidth
-                name="usuario"
-                value={Values.usuario}
-                error={Errores.usuario}
+                name="rep_pass"
+                value={Values.rep_pass}
+                error={Errores.rep_pass}
                 onChange={handlInputChange}
+                type="password"
+                helperText={Errores.rep_pass ? "Completar campo" : ""}
               />
             </Col>
           </Row>
@@ -91,7 +152,7 @@ export default function CambiarPass() {
               loading={IsGuardando}
               loadingPosition="start"
               disabled={IsLoading}
-              onClick={() => {}}
+              onClick={() => Guardar()}
               className="btn btn-create font-AvenirMedium  py-2 px-4 "
               variant="contained"
               xs={{ with: "100$" }}

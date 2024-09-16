@@ -126,6 +126,9 @@ export default function PerfilIndex() {
             color: "#FFFFFF",
           }).then((result) => {
             //navigate(-1);
+
+            //TODO actualizar token ya que contiene el user y debe estar actualizado
+
             setLocalStorage("nombre", data.data[0].name);
             setLocalStorage("user", data.data[0].user);
             setName(data.data[0].name);
@@ -245,13 +248,6 @@ export default function PerfilIndex() {
                 {IsGuardando ? "Guardando..." : "Guardar"}
               </span>
             </LoadingButton>
-            <Button
-              onClick={() => navigate(-1)}
-              className="btn btn-cancel font-AvenirMedium py-2 px-4"
-              variant="outlined"
-            >
-              Cancelar
-            </Button>
           </Stack>
         </CardActions>
       </Card>
