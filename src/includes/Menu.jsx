@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
@@ -18,6 +18,7 @@ import { Route, Routes } from "react-router-dom";
 import { getLocalStorage } from "../context/storaje";
 import NotFound from "./NotFound";
 import PlataformasRoutes from "../modules/plataformas/plataformas.routes";
+import PerfilRoutes from "../modules/perfil/perfil.routes";
 
 const drawerWidth = 240;
 
@@ -86,9 +87,14 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
+export const ContextGeneral = createContext();
+
 export default function Menu() {
   const theme = useTheme();
   const [open, setOpen] = useState(true);
+
+  //contexto vars
+  const [Name, setName] = useState(getLocalStorage("nombre"));
 
   const [showLogo, setShowLogo] = useState(true);
 
@@ -104,70 +110,73 @@ export default function Menu() {
 
   return (
     <>
-      <Box sx={{ display: "flex" }}>
-        <CssBaseline />
-        <AppBar position="fixed" open={open}>
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-              sx={{
-                marginRight: 5,
-                ...(open && { display: "none" }),
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <div className="ps-5 d-flex justify-content-between  w-100">
-              <Typography
-                variant="h6"
-                noWrap
-                component="div"
-                className="ms-2 fw-bold"
+      <ContextGeneral.Provider value={{ Name, setName }}>
+        <Box sx={{ display: "flex" }}>
+          <CssBaseline />
+          <AppBar position="fixed" open={open}>
+            <Toolbar>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerOpen}
+                edge="start"
+                sx={{
+                  marginRight: 5,
+                  ...(open && { display: "none" }),
+                }}
               >
-                Password Manager
-              </Typography>
-              <Typography
-                variant="h6"
-                noWrap
-                component="div"
-                className="me-4 fw-bold"
-              >
-                Bienvenido, {getLocalStorage("nombre")} :)
-              </Typography>
-            </div>
-          </Toolbar>
-        </AppBar>
-        <Drawer variant="permanent" open={open}>
-          <DrawerHeader>
-            {showLogo && (
-              <div className="w-100 d-flex justify-content-center p-3">
-                <img src={Logo} alt="" width={70} height={70} />
+                <MenuIcon />
+              </IconButton>
+              <div className="ps-5 d-flex justify-content-between  w-100">
+                <Typography
+                  variant="h6"
+                  noWrap
+                  component="div"
+                  className="ms-2 fw-bold"
+                >
+                  Password Manager
+                </Typography>
+                <Typography
+                  variant="h6"
+                  noWrap
+                  component="div"
+                  className="me-4 fw-bold"
+                >
+                  Bienvenido, {Name} :)
+                </Typography>
               </div>
-            )}
-            <IconButton onClick={handleDrawerClose}>
-              {theme.direction === "rtl" ? (
-                <ChevronRightIcon />
-              ) : (
-                <ChevronLeftIcon />
+            </Toolbar>
+          </AppBar>
+          <Drawer variant="permanent" open={open}>
+            <DrawerHeader>
+              {showLogo && (
+                <div className="w-100 d-flex justify-content-center p-3">
+                  <img src={Logo} alt="" width={70} height={70} />
+                </div>
               )}
-            </IconButton>
-          </DrawerHeader>
-          <Divider />
+              <IconButton onClick={handleDrawerClose}>
+                {theme.direction === "rtl" ? (
+                  <ChevronRightIcon />
+                ) : (
+                  <ChevronLeftIcon />
+                )}
+              </IconButton>
+            </DrawerHeader>
+            <Divider />
 
-          <ListOptions open={open} />
-        </Drawer>
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <DrawerHeader />
-          <Routes>
-            <Route path="/" element={<>asdasd</>} />
-            <Route path="/plataformas/*" element={<PlataformasRoutes />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+            <ListOptions open={open} />
+          </Drawer>
+          <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <DrawerHeader />
+            <Routes>
+              <Route path="/" element={<>asdasd</>} />
+              <Route path="/plataformas/*" element={<PlataformasRoutes />} />
+              <Route path="/perfil/*" element={<PerfilRoutes />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Box>
         </Box>
-      </Box>
+      </ContextGeneral.Provider>
     </>
   );
 }

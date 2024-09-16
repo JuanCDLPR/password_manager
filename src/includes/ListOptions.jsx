@@ -169,8 +169,8 @@ export default function ListOptions({ open }) {
       <Divider />
 
       <List>
-        <Link to={"cuenta"} style={{ textDecoration: "none", color: "white" }}>
-          <Tooltip title={open ? "" : "Cuenta"} placement="right-end">
+        <Link to={"perfil"} style={{ textDecoration: "none", color: "white" }}>
+          <Tooltip title={open ? "" : "Perfil"} placement="right-end">
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 sx={{
@@ -189,7 +189,7 @@ export default function ListOptions({ open }) {
                   <AccountCircleIcon />
                 </ListItemIcon>
                 <ListItemText
-                  primary={"Cuenta"}
+                  primary={"Perfil"}
                   sx={{ opacity: open ? 1 : 0 }}
                 />
               </ListItemButton>
