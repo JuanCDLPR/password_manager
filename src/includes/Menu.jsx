@@ -19,6 +19,7 @@ import { getLocalStorage } from "../context/storaje";
 import NotFound from "./NotFound";
 import PlataformasRoutes from "../modules/plataformas/plataformas.routes";
 import PerfilRoutes from "../modules/perfil/perfil.routes";
+import RefreshSesion from "./RefreshSesion";
 
 const drawerWidth = 240;
 
@@ -136,6 +137,9 @@ export default function Menu() {
                 >
                   Password Manager
                 </Typography>
+
+                <RefreshSesion />
+
                 <Typography
                   variant="h6"
                   noWrap
