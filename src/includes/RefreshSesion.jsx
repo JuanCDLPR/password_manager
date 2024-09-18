@@ -147,7 +147,7 @@ const RefreshSesion = () => {
         </Alert>
       </StyledSnackbar>
 
-      <div className="me-2 d-none d-sm-flex align-items-center justify-content-center">
+      <div className="me-2 d-flex align-items-center justify-content-center">
         <div>Sesion expira en:</div>
         <div className="ms-1">{formatTime(timeRemaining)}</div>
         <Tooltip title="Refrescar Token">
@@ -164,53 +164,6 @@ const RefreshSesion = () => {
           </IconButton>
         </Tooltip>
       </div>
-
-      <Menu
-        anchorEl={anchorEl}
-        id="account-notificaciones"
-        open={open}
-        onClose={handleClose}
-        onClick={handleClose}
-        PaperProps={{
-          elevation: 0,
-          sx: {
-            overflow: "auto",
-            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-            mt: 1.5,
-            "& .MuiAvatar-root": {
-              width: 32,
-              height: 32,
-              ml: -0.5,
-              mr: 1,
-            },
-            "&:before": {
-              content: '""',
-              display: "block",
-              position: "absolute",
-              top: 0,
-              right: 14,
-              width: 10,
-              height: 10,
-              bgcolor: "background.paper",
-              transform: "translateY(-50%) rotate(45deg)",
-              zIndex: 0,
-            },
-          },
-        }}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-      >
-        <MenuItem>
-          <div>exp:</div>
-          <div className="ms-1 fw-bold">{formatTime(timeRemaining)}</div>
-        </MenuItem>
-        <MenuItem onClick={RefrescarToken}>
-          <div>Refrescar token</div>
-          <div className="ms-2">
-            <HistoryIcon style={{ color: "#A0A0A0" }} />
-          </div>
-        </MenuItem>
-      </Menu>
     </>
   );
 };
