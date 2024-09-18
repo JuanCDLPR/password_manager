@@ -20,6 +20,7 @@ import NotFound from "./NotFound";
 import PlataformasRoutes from "../modules/plataformas/plataformas.routes";
 import PerfilRoutes from "../modules/perfil/perfil.routes";
 import RefreshSesion from "./RefreshSesion";
+import GruposRoutes from "../modules/grupos/grupos.routes";
 
 const drawerWidth = 240;
 
@@ -176,6 +177,7 @@ export default function Menu() {
               <Route path="/" element={<>asdasd</>} />
               <Route path="/plataformas/*" element={<PlataformasRoutes />} />
               <Route path="/perfil/*" element={<PerfilRoutes />} />
+              <Route path="/grupos/*" element={<GruposRoutes />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Box>
