@@ -17,7 +17,7 @@ import { LoadingButton } from "@mui/lab";
 import moment from "moment-timezone";
 import { MySwal, StyledSnackbar } from "../../../lib/GeneralesImports";
 import { getInfoPerfil, guardar } from "../functions/perfil";
-import { setLocalStorage } from "../../../context/storaje";
+import { setLocalStorage, setLocalStorageJWT } from "../../../context/storaje";
 import { ContextGeneral } from "../../../includes/Menu";
 
 export default function PerfilIndex() {
@@ -127,10 +127,10 @@ export default function PerfilIndex() {
           }).then((result) => {
             //navigate(-1);
 
-            //TODO actualizar token ya que contiene el user y debe estar actualizado
-
             setLocalStorage("nombre", data.data[0].name);
             setLocalStorage("user", data.data[0].user);
+            setLocalStorageJWT(data.data[0].token);
+
             setName(data.data[0].name);
 
             consultarInformacion();

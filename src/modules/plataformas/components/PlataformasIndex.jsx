@@ -14,7 +14,7 @@ export default function PlataformasIndex() {
   const [ValueSelect, setValueSelect] = useState("1");
   const [Lista, setLista] = useState([]);
 
-  const getListaCliente = () => {
+  const getListaPlataformas = () => {
     setIsLoading(true);
     getLista(ValueBusqueda, ValueSelect)
       .then((resp) => {
@@ -30,7 +30,7 @@ export default function PlataformasIndex() {
   };
 
   useEffect(() => {
-    getListaCliente();
+    getListaPlataformas();
   }, [ValueBusqueda, ValueSelect]);
 
   return (
@@ -43,20 +43,6 @@ export default function PlataformasIndex() {
 
           <div className="p-2">
             <Stack spacing={2} direction={{ xs: "column", sm: "row" }}>
-              {/* <Button
-              className="btn btn-exp-Excel font-AvenirMedium"
-              variant="text"
-            >
-              <img className="me-2" src={ExportarSucess} />
-              Exportar Excel
-            </Button>
-            <Button
-              className="btn  btn-exp-PDF  font-AvenirMedium"
-              variant="text"
-            >
-              <img className="me-2" src={ExportarDanger} />
-              Exportar PDF
-            </Button> */}
               <Link to="./add" style={{ textDecoration: "none" }}>
                 <Button
                   className="btn btn-create font-AvenirMedium px-4 "
