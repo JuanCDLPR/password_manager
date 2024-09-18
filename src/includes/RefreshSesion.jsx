@@ -1,7 +1,11 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Tooltip, Menu, MenuItem, IconButton, Alert } from "@mui/material";
 import HistoryIcon from "@mui/icons-material/History";
-import { getLocalStorageJWT, setLocalStorageJWT } from "../context/storaje";
+import {
+  clearStorageJWT,
+  getLocalStorageJWT,
+  setLocalStorageJWT,
+} from "../context/storaje";
 import { jwtDecode } from "jwt-decode";
 import { getData } from "../context/backend";
 import { MySwal, StyledSnackbar } from "../lib/GeneralesImports";
@@ -48,6 +52,7 @@ const RefreshSesion = () => {
           } else {
             setTimeRemaining(0);
             clearInterval(intervalId);
+            clearStorageJWT();
           }
         };
 
