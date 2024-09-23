@@ -69,7 +69,7 @@ export const getInfoGrupo = async (id) => {
         let Values = {
           id: data._id,
           nombre: data.name,
-          url: data.url,
+          acron: data.acronimo,
         };
         resolve({ Values });
       }
