@@ -38,7 +38,7 @@ export default function Tabla({ Lista, IsLoading, setLista }) {
 
   const EliminarRegistro = (id) => {
     MySwal.fire({
-      title: "¿Estas seguro de eliminar esta actividad?",
+      title: "¿Estas seguro de eliminar este grupo?",
       text: "esta acción no se puede deshacer",
       icon: "warning",
       showDenyButton: true,
