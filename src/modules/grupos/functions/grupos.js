@@ -95,6 +95,12 @@ export const guardar = async (
       error = true;
     }
 
+    if (!Values.acron || Values.acron == "") {
+      Errores.acron = true;
+      setErrores(Errores);
+      error = true;
+    }
+
     if (!error) {
       let data = [];
 

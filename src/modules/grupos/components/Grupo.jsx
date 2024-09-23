@@ -18,10 +18,12 @@ export default function Grupo() {
   const [Values, setValues] = useState({
     id: id ?? "0",
     nombre: "",
+    acron: "",
   });
 
   const [Errores, setErrores] = useState({
     nombre: false,
+    acron: false,
   });
 
   const handleClose = () => {
@@ -161,6 +163,18 @@ export default function Grupo() {
                 variant="outlined"
                 value={Values.nombre}
                 error={Errores.nombre}
+                onChange={handlInputChange}
+              />
+            </Col>
+
+            <Col sm={12} md={6} className="p-3">
+              <TextField
+                fullWidth
+                name="acron"
+                label="Acronimo"
+                variant="outlined"
+                value={Values.acron}
+                error={Errores.acron}
                 onChange={handlInputChange}
               />
             </Col>

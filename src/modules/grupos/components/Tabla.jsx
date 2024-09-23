@@ -99,6 +99,10 @@ export default function Tabla({ Lista, IsLoading, setLista }) {
                 NOMBRE
               </TableCell>
 
+              <TableCell className="font-Avenir font-AvenirBold" align="left">
+                ACRONIMO
+              </TableCell>
+
               <TableCell className="font-Avenir font-AvenirBold" align="right">
                 ACCIONES
               </TableCell>
@@ -134,6 +138,10 @@ export default function Tabla({ Lista, IsLoading, setLista }) {
                   </TableCell>
                   <TableCell component="th" scope="row" className="">
                     {row.name}
+                  </TableCell>
+
+                  <TableCell component="th" scope="row" className="">
+                    {row.acronimo}
                   </TableCell>
 
                   <TableCell align="right">

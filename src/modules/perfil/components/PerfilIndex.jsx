@@ -183,7 +183,8 @@ export default function PerfilIndex() {
             </Col>
             <Col
               xs={9}
-              className="d-flex justify-content-start align-items-center"
+              //className="d-flex justify-content-start align-items-center"
+              className="d-flex flex-column align-content-center align-self-center"
             >
               <Typography variant="h6">
                 Actualizado por ultima vez:{" "}
