@@ -58,6 +58,11 @@ El cliente inicia en `http://localhost:3021` en Windows.
 | Accesos | Pendiente |
 | Dashboard | Provisional |
 
+El sidebar también reserva rutas vacías para Seguridad, Auditoría, Análisis de
+seguridad, Generador, Papelera, Importar/Exportar, Favoritos y etiquetas, Notas
+seguras, Preferencias, Respaldos y Alertas. Estas entradas aún no representan
+funcionalidades implementadas.
+
 ## Tecnologías
 
 React 18, React Router 6, Material UI 5, React Bootstrap, SweetAlert2,

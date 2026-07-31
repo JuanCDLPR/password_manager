@@ -25,6 +25,23 @@ import AdminInvitations from "../modules/admin/AdminInvitations";
 
 const drawerWidth = 240;
 
+const EmptyModule = () => null;
+
+const RESERVED_MODULE_PATHS = [
+  "/accesos/*",
+  "/favoritos/*",
+  "/notas-seguras/*",
+  "/generador/*",
+  "/analisis-seguridad/*",
+  "/seguridad/*",
+  "/auditoria/*",
+  "/papelera/*",
+  "/importar-exportar/*",
+  "/respaldos/*",
+  "/alertas/*",
+  "/preferencias/*",
+];
+
 const openedMixin = (theme) => ({
   width: drawerWidth,
   transition: theme.transitions.create("width", {
@@ -180,6 +197,9 @@ export default function Menu() {
               <Route path="/plataformas/*" element={<PlataformasRoutes />} />
               <Route path="/perfil/*" element={<PerfilRoutes />} />
               <Route path="/grupos/*" element={<GruposRoutes />} />
+              {RESERVED_MODULE_PATHS.map((path) => (
+                <Route key={path} path={path} element={<EmptyModule />} />
+              ))}
               {isSuperadmin && (
                 <Route path="/admin/invitations" element={<AdminInvitations />} />
               )}
