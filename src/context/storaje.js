@@ -25,6 +25,8 @@ export const clearStorageJWT = () => {
     window.localStorage.removeItem("JWT");
     window.localStorage.removeItem("nombre");
     window.localStorage.removeItem("user");
+    window.localStorage.removeItem("email");
+    window.localStorage.removeItem("role");
 
     window.location.href = "/";
   } catch (error) {

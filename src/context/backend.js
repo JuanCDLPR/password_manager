@@ -74,8 +74,9 @@ const request = async (path, { method = "GET", body, auth = true } = {}) => {
       });
 
       if (
-        error.status === 401 &&
-        ["AUTH_REQUIRED", "SESSION_INVALID"].includes(error.code)
+        (error.status === 401 &&
+          ["AUTH_REQUIRED", "SESSION_INVALID"].includes(error.code)) ||
+        error.code === "ACCOUNT_DISABLED"
       ) {
         clearStorageJWT();
       }

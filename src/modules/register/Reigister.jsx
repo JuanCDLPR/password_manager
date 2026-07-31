@@ -14,6 +14,7 @@ import { api } from "../../context/backend";
 export default function Reigister() {
   const [Values, setValues] = useState({
     Usuario: "",
+    Correo: "",
     Contrasena: "",
     Nombre: "",
   });
@@ -22,6 +23,7 @@ export default function Reigister() {
 
   const [Errores, setErrores] = useState({
     Usuario: false,
+    Correo: false,
     Contrasena: false,
     Nombre: false,
   });
@@ -43,17 +45,22 @@ export default function Reigister() {
   const registrar = () => {
     let error = false;
 
-    if (!Values.Usuario || Values.Usuario == "") {
+    if (!Values.Usuario || Values.Usuario === "") {
       Errores.Usuario = true;
       error = true;
     }
 
-    if (!Values.Contrasena || Values.Contrasena == "") {
+    if (!Values.Correo || Values.Correo === "") {
+      Errores.Correo = true;
+      error = true;
+    }
+
+    if (!Values.Contrasena || Values.Contrasena === "") {
       Errores.Contrasena = true;
       error = true;
     }
 
-    if (!Values.Nombre || Values.Nombre == "") {
+    if (!Values.Nombre || Values.Nombre === "") {
       Errores.Nombre = true;
       error = true;
     }
@@ -70,6 +77,7 @@ export default function Reigister() {
     const body = {
       name: Values.Nombre,
       user: Values.Usuario,
+      email: Values.Correo,
       password: Values.Contrasena,
     };
 
@@ -79,7 +87,12 @@ export default function Reigister() {
         setSeverity("success");
         setMensaje(message);
         setOpen(true);
-        setValues({ Usuario: "", Contrasena: "", Nombre: "" });
+        setValues({
+          Usuario: "",
+          Correo: "",
+          Contrasena: "",
+          Nombre: "",
+        });
         setTimeout(() => {
           window.location = "../";
         }, 2000);
@@ -150,6 +163,18 @@ export default function Reigister() {
             label="Usuario"
             variant="outlined"
             value={Values.Usuario}
+            onChange={handlInputChange}
+            className="mt-3"
+          />
+          <TextField
+            error={Errores.Correo}
+            fullWidth
+            id="Correo"
+            name="Correo"
+            label="Correo electrónico"
+            variant="outlined"
+            type="email"
+            value={Values.Correo}
             onChange={handlInputChange}
             className="mt-3"
           />

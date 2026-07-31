@@ -34,12 +34,12 @@ export default function Login() {
       [target.name]: target.value,
     });
 
-    if (!Values.Correo || Values.Correo == "") {
+    if (!Values.Correo || Values.Correo === "") {
       setCorreoError(true);
     } else {
       setCorreoError(false);
     }
-    if (!Values.Contraseña || Values.Contraseña == "") {
+    if (!Values.Contraseña || Values.Contraseña === "") {
       setContraseñaError(true);
       return;
     } else {
@@ -59,18 +59,18 @@ export default function Login() {
 
   const clicLogin = () => {
     let error = false;
-    if (!Values.Correo || Values.Correo == "") {
+    if (!Values.Correo || Values.Correo === "") {
       setCorreoError(true);
       error = true;
     }
-    if (!Values.Contraseña || Values.Contraseña == "") {
+    if (!Values.Contraseña || Values.Contraseña === "") {
       setContraseñaError(true);
       error = true;
     }
     if (!error) {
       setOpenLoading(true);
       const info = {
-        user: Values.Correo,
+        login: Values.Correo,
         password: Values.Contraseña,
       };
       api
@@ -80,6 +80,8 @@ export default function Login() {
           setLocalStorageJWT(data.token);
           setLocalStorage("nombre", data.name);
           setLocalStorage("user", data.user);
+          setLocalStorage("email", data.email || "");
+          setLocalStorage("role", data.role);
           window.location.reload();
         })
         .catch((error) => {
@@ -134,7 +136,7 @@ export default function Login() {
               fullWidth
               id="Correo"
               name="Correo"
-              label="Usuario"
+              label="Usuario o correo"
               variant="outlined"
               value={Values.Correo}
               onChange={handlInputChange}

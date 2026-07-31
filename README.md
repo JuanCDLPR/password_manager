@@ -9,7 +9,8 @@ sesión y catálogo de plataformas.
 
 ## Funciones disponibles
 
-- Registro e inicio de sesión.
+- Registro con correo e inicio de sesión por usuario o correo.
+- Validación de sesión, estado y rol contra el backend al abrir la app.
 - Contador y renovación de JWT mediante POST seguro.
 - Perfil y cambio de contraseña.
 - CRUD de plataformas con búsqueda, ordenamiento y paginación local.
@@ -84,7 +85,7 @@ El árbol heredado de Create React App también reporta 80 vulnerabilidades en
 
 No deben almacenarse secretos reales hasta implementar el diseño criptográfico
 de la bóveda descrito en la
-[documentación de seguridad](https://github.com/JuanCDLPR/password_manager_back/blob/main/docs/SEGURIDAD.md).
+[documentación de seguridad](https://github.com/JuanCDLPR/password_manager_back/blob/main/docs/03-SEGURIDAD.md).
 
 ## Producción
 
