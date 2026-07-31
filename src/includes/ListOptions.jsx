@@ -54,7 +54,11 @@ const BASE_SECTIONS = [
         path: "/dashboard/accesos-recientes",
         icon: UpdateOutlinedIcon,
       },
-      { label: "Alertas", path: "/alertas", icon: NotificationsActiveOutlinedIcon },
+      {
+        label: "Alertas",
+        path: "/alertas",
+        icon: NotificationsActiveOutlinedIcon,
+      },
     ],
   },
   {
@@ -65,7 +69,11 @@ const BASE_SECTIONS = [
       { label: "Grupos", path: "/grupos", icon: AutoAwesomeMotionIcon },
       { label: "Plataformas", path: "/plataformas", icon: SportsEsportsIcon },
       { label: "Accesos", path: "/accesos", icon: KeyIcon },
-      { label: "Notas seguras", path: "/notas-seguras", icon: NoteAltOutlinedIcon },
+      {
+        label: "Notas seguras",
+        path: "/notas-seguras",
+        icon: NoteAltOutlinedIcon,
+      },
       { label: "Favoritos", path: "/favoritos", icon: StarOutlineIcon },
       { label: "Papelera", path: "/papelera", icon: DeleteSweepOutlinedIcon },
     ],
@@ -95,13 +103,21 @@ const BASE_SECTIONS = [
     icon: AccountCircleOutlinedIcon,
     items: [
       { label: "Perfil", path: "/perfil", icon: PersonOutlineIcon },
-      { label: "Preferencias", path: "/preferencias", icon: SettingsOutlinedIcon },
+      {
+        label: "Preferencias",
+        path: "/preferencias",
+        icon: SettingsOutlinedIcon,
+      },
       {
         label: "Importar / exportar",
         path: "/importar-exportar",
         icon: ImportExportOutlinedIcon,
       },
-      { label: "Recuperación", path: "/recuperacion", icon: RestoreOutlinedIcon },
+      {
+        label: "Recuperación",
+        path: "/recuperacion",
+        icon: RestoreOutlinedIcon,
+      },
       { label: "Respaldos", path: "/respaldos", icon: BackupOutlinedIcon },
     ],
   },
@@ -113,7 +129,11 @@ const ADMIN_SECTION = {
   icon: AdminPanelSettingsIcon,
   items: [
     { label: "Usuarios", path: "/admin/users", icon: PeopleOutlineIcon },
-    { label: "Invitaciones", path: "/admin/invitations", icon: MailOutlineIcon },
+    {
+      label: "Invitaciones",
+      path: "/admin/invitations",
+      icon: MailOutlineIcon,
+    },
     {
       label: "Auditoría administrativa",
       path: "/admin/audit",
@@ -134,14 +154,41 @@ function MenuOption({ label, path, icon: Icon, selected }) {
         component={Link}
         to={path}
         selected={selected}
-        sx={{ minHeight: 44, pl: 4, pr: 2.5 }}
+        sx={{
+          minHeight: 44,
+          pl: 4,
+          pr: 2.5,
+          color: "white",
+          textDecoration: "none",
+          "&:visited": {
+            color: "white",
+          },
+
+          "&:hover": {
+            color: "white",
+            textDecoration: "none",
+          },
+
+          "&.Mui-selected": {
+            color: "white",
+          },
+
+          "&.Mui-selected:hover": {
+            color: "white",
+          },
+        }}
       >
-        <ListItemIcon sx={{ minWidth: 36 }}>
+        <ListItemIcon sx={{ minWidth: 36, color: "inherit" }}>
           <Icon fontSize="small" />
         </ListItemIcon>
+
         <ListItemText
           primary={label}
-          primaryTypographyProps={{ fontSize: ".875rem", noWrap: true }}
+          primaryTypographyProps={{
+            fontSize: ".875rem",
+            noWrap: true,
+            color: "inherit",
+          }}
         />
       </ListItemButton>
     </ListItem>
@@ -173,7 +220,10 @@ function MenuSection({ section, open, expanded, onToggle, currentPath }) {
             >
               <Icon />
             </ListItemIcon>
-            <ListItemText primary={section.label} sx={{ opacity: open ? 1 : 0 }} />
+            <ListItemText
+              primary={section.label}
+              sx={{ opacity: open ? 1 : 0 }}
+            />
             {open && (expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />)}
           </ListItemButton>
         </ListItem>
@@ -198,11 +248,11 @@ export default function ListOptions({ open, isSuperadmin }) {
   const { pathname } = useLocation();
   const sections = useMemo(
     () => (isSuperadmin ? [...BASE_SECTIONS, ADMIN_SECTION] : BASE_SECTIONS),
-    [isSuperadmin]
+    [isSuperadmin],
   );
   const activeSection =
     sections.find((section) =>
-      section.items.some((option) => isCurrentPath(pathname, option.path))
+      section.items.some((option) => isCurrentPath(pathname, option.path)),
     )?.id ?? "dashboard";
   const [expandedSection, setExpandedSection] = useState(activeSection);
 
@@ -258,7 +308,11 @@ export default function ListOptions({ open, isSuperadmin }) {
 
       <List>
         <Tooltip title={open ? "" : "Cerrar sesión"} placement="right-end">
-          <ListItem disablePadding sx={{ display: "block" }} onClick={closeSession}>
+          <ListItem
+            disablePadding
+            sx={{ display: "block" }}
+            onClick={closeSession}
+          >
             <ListItemButton
               sx={{
                 minHeight: 48,
