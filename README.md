@@ -58,10 +58,10 @@ El cliente inicia en `http://localhost:3021` en Windows.
 | Accesos | Pendiente |
 | Dashboard | Provisional |
 
-El sidebar también reserva rutas vacías para Seguridad, Auditoría, Análisis de
-seguridad, Generador, Papelera, Importar/Exportar, Favoritos y etiquetas, Notas
-seguras, Preferencias, Respaldos y Alertas. Estas entradas aún no representan
-funcionalidades implementadas.
+El sidebar agrupa la navegación en secciones desplegables: Dashboard, Bóveda,
+Seguridad, Cuenta y Administración. Solo muestra Administración al superadmin.
+Las rutas futuras dentro de estas secciones permanecen vacías y aún no
+representan funcionalidades implementadas.
 
 ## Tecnologías
 

@@ -29,17 +29,19 @@ const EmptyModule = () => null;
 
 const RESERVED_MODULE_PATHS = [
   "/accesos/*",
+  "/dashboard/accesos-recientes/*",
   "/favoritos/*",
   "/notas-seguras/*",
   "/generador/*",
   "/analisis-seguridad/*",
-  "/seguridad/*",
+  "/sesiones/*",
   "/auditoria/*",
   "/papelera/*",
   "/importar-exportar/*",
   "/respaldos/*",
   "/alertas/*",
   "/preferencias/*",
+  "/recuperacion/*",
 ];
 
 const openedMixin = (theme) => ({
@@ -201,7 +203,11 @@ export default function Menu() {
                 <Route key={path} path={path} element={<EmptyModule />} />
               ))}
               {isSuperadmin && (
-                <Route path="/admin/invitations" element={<AdminInvitations />} />
+                <>
+                  <Route path="/admin/users/*" element={<EmptyModule />} />
+                  <Route path="/admin/invitations" element={<AdminInvitations />} />
+                  <Route path="/admin/audit/*" element={<EmptyModule />} />
+                </>
               )}
               <Route path="*" element={<NotFound />} />
             </Routes>
