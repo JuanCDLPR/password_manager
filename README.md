@@ -11,6 +11,8 @@ sesión y catálogo de plataformas.
 
 - Registro con correo e inicio de sesión por usuario o correo.
 - Validación de sesión, estado y rol contra el backend al abrir la app.
+- Registro privado mediante enlaces de invitación.
+- Panel para crear, listar, reenviar y revocar invitaciones de administrador.
 - Contador y renovación de JWT mediante POST seguro.
 - Perfil y cambio de contraseña.
 - CRUD de plataformas con búsqueda, ordenamiento y paginación local.

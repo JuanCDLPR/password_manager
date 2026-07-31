@@ -7,11 +7,13 @@ import {
   Alert,
   Snackbar,
 } from "@mui/material";
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { api } from "../../context/backend";
 
 export default function Reigister() {
+  const [searchParams] = useSearchParams();
+  const invitationToken = searchParams.get("invitation") || "";
   const [Values, setValues] = useState({
     Usuario: "",
     Correo: "",
@@ -20,6 +22,9 @@ export default function Reigister() {
   });
 
   const [IsLoading, setIsLoading] = useState(false);
+  const [InvitationLoading, setInvitationLoading] = useState(true);
+  const [InvitationValid, setInvitationValid] = useState(false);
+  const [InvitationError, setInvitationError] = useState("");
 
   const [Errores, setErrores] = useState({
     Usuario: false,
@@ -32,6 +37,33 @@ export default function Reigister() {
   const [open, setOpen] = useState(false);
 
   const [severity, setSeverity] = useState("error");
+
+  useEffect(() => {
+    if (!invitationToken) {
+      setInvitationError(
+        "El registro solo está disponible mediante una invitación."
+      );
+      setInvitationLoading(false);
+      return;
+    }
+
+    api
+      .get(`invitations/${encodeURIComponent(invitationToken)}`, {
+        auth: false,
+      })
+      .then(({ data }) => {
+        setValues((current) => ({
+          ...current,
+          Correo: data.email,
+          Nombre: data.invitedName,
+        }));
+        setInvitationValid(true);
+      })
+      .catch((error) => {
+        setInvitationError(error.message);
+      })
+      .finally(() => setInvitationLoading(false));
+  }, [invitationToken]);
 
   const handlInputChange = ({ target }) => {
     setValues({
@@ -79,6 +111,7 @@ export default function Reigister() {
       user: Values.Usuario,
       email: Values.Correo,
       password: Values.Contrasena,
+      invitationToken,
     };
 
     api
@@ -144,6 +177,16 @@ export default function Reigister() {
         }}
       >
         <CardContent>
+          {InvitationLoading && (
+            <Alert severity="info" className="mb-3">
+              Validando invitación...
+            </Alert>
+          )}
+          {InvitationError && (
+            <Alert severity="error" className="mb-3">
+              {InvitationError}
+            </Alert>
+          )}
           <TextField
             error={Errores.Nombre}
             fullWidth
@@ -177,6 +220,7 @@ export default function Reigister() {
             value={Values.Correo}
             onChange={handlInputChange}
             className="mt-3"
+            disabled
           />
           <TextField
             fullWidth
@@ -196,7 +240,7 @@ export default function Reigister() {
             size="large"
             className="btn-Crexendo mt-4"
             onClick={registrar}
-            disabled={IsLoading}
+            disabled={IsLoading || InvitationLoading || !InvitationValid}
           >
             <Typography
               style={{

@@ -11,6 +11,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import AutoAwesomeMotionIcon from "@mui/icons-material/AutoAwesomeMotion";
 import KeyIcon from "@mui/icons-material/Key";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 
 import LogoutIcon from "@mui/icons-material/Logout";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -22,7 +23,7 @@ import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
 
 const MySwal = withReactContent(Swal);
-export default function ListOptions({ open }) {
+export default function ListOptions({ open, isSuperadmin }) {
   const CerrarSesion = () =>
     MySwal.fire({
       title: "¿Estas seguro de cerrar sesión?",
@@ -169,6 +170,41 @@ export default function ListOptions({ open }) {
       <Divider />
 
       <List>
+        {isSuperadmin && (
+          <Link
+            to={"admin/invitations"}
+            style={{ textDecoration: "none", color: "white" }}
+          >
+            <Tooltip
+              title={open ? "" : "Administración"}
+              placement="right-end"
+            >
+              <ListItem disablePadding sx={{ display: "block" }}>
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <AdminPanelSettingsIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={"Administración"}
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            </Tooltip>
+          </Link>
+        )}
         <Link to={"perfil"} style={{ textDecoration: "none", color: "white" }}>
           <Tooltip title={open ? "" : "Perfil"} placement="right-end">
             <ListItem disablePadding sx={{ display: "block" }}>

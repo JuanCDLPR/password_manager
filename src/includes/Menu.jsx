@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useState } from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
@@ -21,6 +21,7 @@ import PlataformasRoutes from "../modules/plataformas/plataformas.routes";
 import PerfilRoutes from "../modules/perfil/perfil.routes";
 import RefreshSesion from "./RefreshSesion";
 import GruposRoutes from "../modules/grupos/grupos.routes";
+import AdminInvitations from "../modules/admin/AdminInvitations";
 
 const drawerWidth = 240;
 
@@ -99,6 +100,7 @@ export default function Menu() {
   const [Name, setName] = useState(getLocalStorage("nombre"));
 
   const [showLogo, setShowLogo] = useState(true);
+  const isSuperadmin = getLocalStorage("role") === "superadmin";
 
   const handleDrawerOpen = () => {
     setShowLogo(true);
@@ -169,7 +171,7 @@ export default function Menu() {
             </DrawerHeader>
             <Divider />
 
-            <ListOptions open={open} />
+            <ListOptions open={open} isSuperadmin={isSuperadmin} />
           </Drawer>
           <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
             <DrawerHeader />
@@ -178,6 +180,9 @@ export default function Menu() {
               <Route path="/plataformas/*" element={<PlataformasRoutes />} />
               <Route path="/perfil/*" element={<PerfilRoutes />} />
               <Route path="/grupos/*" element={<GruposRoutes />} />
+              {isSuperadmin && (
+                <Route path="/admin/invitations" element={<AdminInvitations />} />
+              )}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Box>

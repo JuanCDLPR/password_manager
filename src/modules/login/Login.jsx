@@ -14,7 +14,6 @@ import {
 import { setLocalStorage, setLocalStorageJWT } from "../../context/storaje";
 
 import Logo from "../../assets/key.png";
-import { Link } from "react-router-dom";
 import { api } from "../../context/backend";
 
 export default function Login() {
@@ -170,9 +169,9 @@ export default function Login() {
               </Typography>
             </Button>
             <div className="d-flex flex-row justify-content-center align-items-center mt-4">
-              <Link to={"registrar"} style={{ textDecoration: "none" }}>
-                <Typography>Registrar</Typography>
-              </Link>
+              <Typography variant="body2" color="text.secondary">
+                El registro requiere una invitación.
+              </Typography>
             </div>
           </CardContent>
         </Card>
