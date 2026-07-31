@@ -11,12 +11,54 @@ import Reigister from "./modules/register/Reigister";
 import Menu from "./includes/Menu";
 
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
 import NotFound from "./includes/NotFound";
 import { api } from "./context/backend";
 
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
+  },
+});
+
+const authTheme = createTheme({
+  palette: {
+    mode: "dark",
+    primary: {
+      main: "#6366f1",
+      light: "#818cf8",
+    },
+    background: {
+      default: "#07111f",
+      paper: "#0c1727",
+    },
+    text: {
+      secondary: "#94a3b8",
+    },
+    divider: "rgba(148, 163, 184, .18)",
+  },
+  shape: {
+    borderRadius: 12,
+  },
+  typography: {
+    fontFamily:
+      'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 10,
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
+        },
+      },
+    },
   },
 });
 
@@ -52,11 +94,14 @@ function App() {
       <Menu />
     </ThemeProvider>
   ) : (
-    <Routes>
-      <Route path="/" element={<Login />} />
-      <Route path="registrar/*" element={<Reigister />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <ThemeProvider theme={authTheme}>
+      <CssBaseline />
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="registrar/*" element={<Reigister />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </ThemeProvider>
   );
 }
 

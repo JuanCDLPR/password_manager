@@ -13,6 +13,10 @@ sesión y catálogo de plataformas.
 - Validación de sesión, estado y rol contra el backend al abrir la app.
 - Registro privado mediante enlaces de invitación.
 - Panel para crear, listar, reenviar y revocar invitaciones de administrador.
+- Login responsive con estados accesibles, errores trazables y controles de
+  visibilidad de contraseña.
+- Modal de seguridad, privacidad y uso responsable que distingue funciones
+  disponibles de la futura bóveda cifrada.
 - Contador y renovación de JWT mediante POST seguro.
 - Perfil y cambio de contraseña.
 - CRUD de plataformas con búsqueda, ordenamiento y paginación local.
