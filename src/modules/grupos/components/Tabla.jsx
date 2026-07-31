@@ -64,11 +64,10 @@ export default function Tabla({ Lista, IsLoading, setLista }) {
                 eliminarClienteDeTabla(id);
               });
             })
-            .catch((resp) => {
+            .catch((error) => {
               MySwal.fire({
                 title: "Error!",
-                //text: "Error al eliminar actividad",
-                text: resp.mensaje,
+                text: error.message,
                 icon: "error",
                 background: "#333333",
                 color: "#FFFFFF",

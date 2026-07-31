@@ -7,73 +7,108 @@ export const BACKEND_URL = configuredUrl.endsWith("/")
   ? configuredUrl
   : `${configuredUrl}/`;
 
-const isSuccessCode = (code) => {
-  const numericCode = Number(code);
-  return numericCode >= 200 && numericCode < 300;
-};
+export class ApiError extends Error {
+  constructor({
+    status = 0,
+    code = "UNKNOWN_ERROR",
+    message = "Ocurrió un error inesperado",
+    details,
+    requestId,
+  } = {}) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.code = code;
+    this.details = details;
+    this.requestId = requestId;
+  }
+}
 
-const request = async (
-  url,
-  { method = "GET", body, clearOnUnauthorized = true } = {}
-) => {
-  const token = getLocalStorageJWT();
+export const createClientError = (message, details) =>
+  new ApiError({
+    status: 422,
+    code: "CLIENT_VALIDATION_ERROR",
+    message,
+    details,
+  });
+
+const parsePayload = async (response) => {
+  if (response.status === 204) {
+    return { success: true, message: "", data: null };
+  }
 
   try {
-    const response = await fetch(BACKEND_URL + url, {
-      method,
-      body: body === undefined ? undefined : JSON.stringify(body),
-      headers: {
-        "Content-Type": "application/json",
-        ...(token && { Administracion: token }),
-      },
-    });
-
-    const payload = await response.json().catch(() => ({
-      codigo: response.status,
-      mensaje: "El servidor devolvió una respuesta no válida",
-    }));
-
-    if (response.status === 401 && clearOnUnauthorized) {
-      clearStorageJWT();
-    }
-
-    if (!response.ok || !isSuccessCode(payload.codigo)) {
-      return {
-        error: true,
-        codigo: payload.codigo || response.status,
-        mensaje:
-          payload.mensaje ||
-          `Error al comunicarse con el servidor (${response.status})`,
-      };
-    }
-
-    return { error: false, payload };
+    return await response.json();
   } catch {
-    return {
-      error: true,
-      codigo: 503,
-      mensaje: "Error al conectar con los servidores (503)",
-    };
+    throw new ApiError({
+      status: response.status,
+      code: "INVALID_RESPONSE",
+      message: "El servidor devolvió una respuesta no válida",
+      requestId: response.headers.get("x-request-id"),
+    });
   }
 };
 
-export const postdData = async (url, body, options = {}) => {
-  const result = await request(url, { method: "POST", body, ...options });
-  return result.error
-    ? result
-    : { error: false, data: result.payload };
+const request = async (path, { method = "GET", body, auth = true } = {}) => {
+  const token = auth ? getLocalStorageJWT() : "";
+
+  try {
+    const response = await fetch(BACKEND_URL + path, {
+      method,
+      body: body === undefined ? undefined : JSON.stringify(body),
+      headers: {
+        ...(body !== undefined && { "Content-Type": "application/json" }),
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+    });
+    const payload = await parsePayload(response);
+
+    if (!response.ok) {
+      const error = new ApiError({
+        status: response.status,
+        code: payload?.error?.code || "HTTP_ERROR",
+        message: payload?.error?.message || `Error HTTP ${response.status}`,
+        details: payload?.error?.details,
+        requestId:
+          payload?.error?.requestId || response.headers.get("x-request-id"),
+      });
+
+      if (
+        error.status === 401 &&
+        ["AUTH_REQUIRED", "SESSION_INVALID"].includes(error.code)
+      ) {
+        clearStorageJWT();
+      }
+
+      throw error;
+    }
+
+    if (payload.success !== true) {
+      throw new ApiError({
+        status: response.status,
+        code: "INVALID_RESPONSE",
+        message: "La respuesta del servidor no cumple el contrato esperado",
+        requestId: response.headers.get("x-request-id"),
+      });
+    }
+
+    return payload;
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+
+    throw new ApiError({
+      status: 0,
+      code: "NETWORK_ERROR",
+      message: "No fue posible conectar con el servidor",
+    });
+  }
 };
 
-export const getData = async (url, options = {}) => {
-  const result = await request(url, { method: "GET", ...options });
-  return result.error
-    ? result
-    : { error: false, data: result.payload.data };
-};
-
-export const postUrl = async (url, options = {}) => {
-  const result = await request(url, { method: "POST", ...options });
-  return result.error
-    ? result
-    : { error: false, data: result.payload };
-};
+export const api = Object.freeze({
+  get: (path, options) => request(path, { ...options, method: "GET" }),
+  post: (path, body, options) =>
+    request(path, { ...options, method: "POST", body }),
+  patch: (path, body, options) =>
+    request(path, { ...options, method: "PATCH", body }),
+  delete: (path, options) => request(path, { ...options, method: "DELETE" }),
+});

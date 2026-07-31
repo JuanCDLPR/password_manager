@@ -47,28 +47,20 @@ export default function Grupo() {
     setIsGuardando(true);
     guardar(Values, Errores, setErrores)
       .then((data) => {
-        if (Number(data.codigo) >= 200 && Number(data.codigo) < 300) {
-          setIsGuardando(false);
-          MySwal.fire({
-            title: "Correcto",
-            html: data.mensaje,
-            icon: "success",
-            confirmButtoColor: "#3ABE88",
-            showConfirmButton: false,
-            timer: 12700,
-            background: "#333333",
-            color: "#FFFFFF",
-          }).then((result) => {
-            navigate(-1);
-          });
-        } else {
-          setMensaje(data.mensaje);
-          setOpen(true);
-          setIsGuardando(false);
-        }
+        setIsGuardando(false);
+        MySwal.fire({
+          title: "Correcto",
+          html: data.message,
+          icon: "success",
+          confirmButtoColor: "#3ABE88",
+          showConfirmButton: false,
+          timer: 12700,
+          background: "#333333",
+          color: "#FFFFFF",
+        }).then(() => navigate(-1));
       })
-      .catch((data) => {
-        setMensaje(data.mensaje);
+      .catch((error) => {
+        setMensaje(error.message);
         setOpen(true);
         setIsGuardando(false);
       });
@@ -80,30 +72,12 @@ export default function Grupo() {
     if (id != undefined) {
       getInfoGrupo(id)
         .then((resp) => {
-          //console.log(resp);
-          if (resp?.err?.length == 0) {
-            MySwal.fire({
-              title: "Error",
-              html: resp.mensaje,
-              icon: "error",
-              confirmButtonColor: "#3ABE88",
-              showConfirmButton: true,
-              allowEscapeKey: false,
-              allowEnterKey: false,
-              allowOutsideClick: false,
-              background: "#333333",
-              color: "#FFFFFF",
-            }).then(() => {
-              navigate(-1);
-            });
-          } else {
-            setValues(resp.Values);
-          }
+          setValues(resp.Values);
         })
-        .catch((resp) => {
+        .catch((error) => {
           MySwal.fire({
             title: "Error",
-            html: resp.mensaje,
+            html: error.message,
             icon: "error",
             confirmButtonColor: "#3ABE88",
             showConfirmButton: true,

@@ -14,6 +14,8 @@ sesión y catálogo de plataformas.
 - Perfil y cambio de contraseña.
 - CRUD de plataformas con búsqueda, ordenamiento y paginación local.
 - Manejo HTTP centralizado y API configurable por entorno.
+- Cliente reutilizable `api.get/post/patch/delete`.
+- Errores `ApiError` con estado, código, detalles e identificador de solicitud.
 
 ## Instalación
 
@@ -65,12 +67,17 @@ El script `start` usa `set PORT=3021`, específico de Windows.
 En la validación del 30 de julio de 2026, `react-scripts build` no finalizó
 dentro del tiempo de prueba; la sintaxis Babel sí pasó y el servidor de
 desarrollo respondió HTTP 200. El build de producción requiere diagnóstico.
+El árbol heredado de Create React App también reporta 80 vulnerabilidades en
+`npm audit`; deben resolverse mediante una migración controlada, no con
+`npm audit fix --force`.
 
 ## Configuración de seguridad
 
 - La URL ya no está fija en el código; utiliza `REACT_APP_API_URL`.
 - La renovación envía la contraseña en JSON mediante POST.
 - El cliente HTTP acepta respuestas 2xx y conserva errores del backend.
+- Las pantallas ya no comparan campos duplicados como `codigo`; el estado HTTP
+  determina éxito o error.
 - Al cerrar sesión solo elimina `JWT`, `nombre` y `user`.
 - El JWT aún vive en `localStorage`; una futura etapa debe migrarlo a cookie
   HttpOnly junto con protección CSRF.

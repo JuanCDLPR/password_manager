@@ -8,8 +8,8 @@ import {
   Snackbar,
 } from "@mui/material";
 import React, { useState } from "react";
-import { json, Link } from "react-router-dom";
-import { BACKEND_URL } from "../../context/backend";
+import { Link } from "react-router-dom";
+import { api } from "../../context/backend";
 
 export default function Reigister() {
   const [Values, setValues] = useState({
@@ -73,39 +73,19 @@ export default function Reigister() {
       password: Values.Contrasena,
     };
 
-    fetch(`${BACKEND_URL}usuarios/registrar`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    })
-      .then((res) => {
-        return res.json();
+    api
+      .post("usuarios", body, { auth: false })
+      .then(({ message }) => {
+        setSeverity("success");
+        setMensaje(message);
+        setOpen(true);
+        setValues({ Usuario: "", Contrasena: "", Nombre: "" });
+        setTimeout(() => {
+          window.location = "../";
+        }, 2000);
       })
-      .then((res) => {
-        console.log(res);
-        if (Number(res.codigo) >= 200 && Number(res.codigo) < 300) {
-          setSeverity("success");
-          setMensaje("registrado correctamente");
-          setOpen(true);
-
-          setValues({
-            Correo: "",
-            Contraseña: "",
-            Nombre: "",
-          });
-
-          setTimeout(() => {
-            window.location = "../";
-          }, 2000);
-        } else {
-          setMensaje(res.mensaje);
-          setSeverity("error");
-          setOpen(true);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-        setMensaje("error");
+      .catch((error) => {
+        setMensaje(error.message);
         setSeverity("error");
         setOpen(true);
       })

@@ -67,31 +67,12 @@ export default function PerfilIndex() {
   const consultarInformacion = () => {
     getInfoPerfil()
       .then((resp) => {
-        if (resp?.err?.length === 0) {
-          MySwal.fire({
-            title: "Error",
-            html: resp.mensaje,
-            icon: "error",
-            confirmButtonColor: "#3ABE88",
-            showConfirmButton: true,
-            allowEscapeKey: false,
-            allowEnterKey: false,
-            allowOutsideClick: false,
-            background: "#333333",
-            color: "#FFFFFF",
-          }).then(() => {
-            navigate(-1);
-          });
-        } else {
-          //console.log(resp);
-
-          setValues(resp.Values);
-        }
+        setValues(resp.Values);
       })
-      .catch((resp) => {
+      .catch((error) => {
         MySwal.fire({
           title: "Error",
-          html: resp.mensaje,
+          html: error.message,
           icon: "error",
           confirmButtonColor: "#3ABE88",
           showConfirmButton: true,
@@ -113,36 +94,26 @@ export default function PerfilIndex() {
     setIsGuardando(true);
     guardar(Values, Errores, setErrores)
       .then((data) => {
-        if (Number(data.codigo) >= 200 && Number(data.codigo) < 300) {
-          setIsGuardando(false);
-          MySwal.fire({
-            title: "Correcto",
-            html: data.mensaje,
-            icon: "success",
-            confirmButtoColor: "#3ABE88",
-            showConfirmButton: false,
-            timer: 12700,
-            background: "#333333",
-            color: "#FFFFFF",
-          }).then((result) => {
-            //navigate(-1);
-
-            setLocalStorage("nombre", data.data[0].name);
-            setLocalStorage("user", data.data[0].user);
-            setLocalStorageJWT(data.data[0].token);
-
-            setName(data.data[0].name);
-
-            consultarInformacion();
-          });
-        } else {
-          setMensaje(data.mensaje);
-          setOpen(true);
-          setIsGuardando(false);
-        }
+        setIsGuardando(false);
+        MySwal.fire({
+          title: "Correcto",
+          html: data.message,
+          icon: "success",
+          confirmButtoColor: "#3ABE88",
+          showConfirmButton: false,
+          timer: 12700,
+          background: "#333333",
+          color: "#FFFFFF",
+        }).then(() => {
+          setLocalStorage("nombre", data.data.name);
+          setLocalStorage("user", data.data.user);
+          setLocalStorageJWT(data.data.token);
+          setName(data.data.name);
+          consultarInformacion();
+        });
       })
-      .catch((data) => {
-        setMensaje(data.mensaje);
+      .catch((error) => {
+        setMensaje(error.message);
         setOpen(true);
         setIsGuardando(false);
       });

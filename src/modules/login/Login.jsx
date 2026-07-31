@@ -15,7 +15,7 @@ import { setLocalStorage, setLocalStorageJWT } from "../../context/storaje";
 
 import Logo from "../../assets/key.png";
 import { Link } from "react-router-dom";
-import { BACKEND_URL } from "../../context/backend";
+import { api } from "../../context/backend";
 
 export default function Login() {
   const [Values, setValues] = useState({
@@ -73,39 +73,19 @@ export default function Login() {
         user: Values.Correo,
         password: Values.Contraseña,
       };
-      const requestOptions = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(info),
-      };
-
-      fetch(`${BACKEND_URL}usuarios/auth`, requestOptions)
-        .then((response) => {
-          return response.json();
-        })
-        .then((response) => {
-          //console.log(response);
+      api
+        .post("usuarios/session", info, { auth: false })
+        .then(({ data }) => {
           setOpenLoading(false);
-          if (response.codigo == 200) {
-            //console.log(response);
-
-            setLocalStorageJWT(response.data.token);
-            setLocalStorage("nombre", response.data.name);
-            setLocalStorage("user", response.data.user);
-
-            window.location.reload();
-          } else {
-            setMensaje(response.mensaje);
-            setOpen(true);
-          }
+          setLocalStorageJWT(data.token);
+          setLocalStorage("nombre", data.name);
+          setLocalStorage("user", data.user);
+          window.location.reload();
         })
         .catch((error) => {
           setOpenLoading(false);
-          setMensaje(
-            "Ha ocurrido un error al conectar con nuestros servidores, intenta mas tarde."
-          );
+          setMensaje(error.message);
           setOpen(true);
-          return;
         });
     }
   };

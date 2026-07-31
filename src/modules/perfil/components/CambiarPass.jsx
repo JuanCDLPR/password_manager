@@ -57,31 +57,23 @@ export default function CambiarPass() {
     setIsGuardando(true);
     update_pass(Values, Errores, setErrores)
       .then((data) => {
-        if (Number(data.codigo) >= 200 && Number(data.codigo) < 300) {
-          setIsGuardando(false);
-          MySwal.fire({
-            title: "Correcto",
-            html: data.mensaje,
-            icon: "success",
-            confirmButtoColor: "#3ABE88",
-            showConfirmButton: false,
-            timer: 12700,
-            background: "#333333",
-            color: "#FFFFFF",
-          }).then((result) => {
-            if (data.data[0]) {
-              setLocalStorageJWT(data.data[0]);
-            }
-            navigate(-1);
-          });
-        } else {
-          setMensaje(data.mensaje);
-          setOpen(true);
-          setIsGuardando(false);
-        }
+        setIsGuardando(false);
+        MySwal.fire({
+          title: "Correcto",
+          html: data.message,
+          icon: "success",
+          confirmButtoColor: "#3ABE88",
+          showConfirmButton: false,
+          timer: 12700,
+          background: "#333333",
+          color: "#FFFFFF",
+        }).then(() => {
+          setLocalStorageJWT(data.data.token);
+          navigate(-1);
+        });
       })
-      .catch((data) => {
-        setMensaje(data.mensaje);
+      .catch((error) => {
+        setMensaje(error.message);
         setOpen(true);
         setIsGuardando(false);
       });

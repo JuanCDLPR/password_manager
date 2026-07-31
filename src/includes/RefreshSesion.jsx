@@ -3,7 +3,7 @@ import { Tooltip, Menu, MenuItem, IconButton, Alert } from "@mui/material";
 import HistoryIcon from "@mui/icons-material/History";
 import { getLocalStorageJWT, setLocalStorageJWT } from "../context/storaje";
 import { jwtDecode } from "jwt-decode";
-import { postdData } from "../context/backend";
+import { api } from "../context/backend";
 import { MySwal, StyledSnackbar } from "../lib/GeneralesImports";
 import Trees from "../assets/trees.png";
 import NyanCat from "../assets/nyan-cat.gif";
@@ -109,23 +109,15 @@ const RefreshSesion = () => {
         imageAlt: "Custom image",
       }).then((result) => {
         if (result.value) {
-          postdData(
-            "usuarios/refresh",
-            { password: result.value },
-            { clearOnUnauthorized: false }
-          )
-            .then((data) => {
-              if (!data.error) {
-                setLocalStorageJWT(data.data.data[0]);
-                setToken(data.data.data[0]);
-              } else {
-                //setMensaje("No se pudo actualizar el token");
-                setMensaje(data.mensaje);
-                setOpenA(true);
-              }
+          api
+            .post("usuarios/session/refresh", { password: result.value })
+            .then(({ data }) => {
+              setLocalStorageJWT(data.token);
+              setToken(data.token);
             })
-            .catch((e) => {
-              console.log(e);
+            .catch((error) => {
+              setMensaje(error.message);
+              setOpenA(true);
             });
         } else {
           setMensaje("Ingresa la contraseña para actualizar el token");
