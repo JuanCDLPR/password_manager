@@ -22,7 +22,9 @@ export const setLocalStorageJWT = (token) => {
 
 export const clearStorageJWT = () => {
   try {
-    window.localStorage.clear();
+    window.localStorage.removeItem("JWT");
+    window.localStorage.removeItem("nombre");
+    window.localStorage.removeItem("user");
 
     window.location.href = "/";
   } catch (error) {

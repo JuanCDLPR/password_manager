@@ -83,7 +83,7 @@ export default function Reigister() {
       })
       .then((res) => {
         console.log(res);
-        if (res.codigo == 200) {
+        if (Number(res.codigo) >= 200 && Number(res.codigo) < 300) {
           setSeverity("success");
           setMensaje("registrado correctamente");
           setOpen(true);

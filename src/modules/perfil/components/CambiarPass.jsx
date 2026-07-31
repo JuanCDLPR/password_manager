@@ -57,7 +57,7 @@ export default function CambiarPass() {
     setIsGuardando(true);
     update_pass(Values, Errores, setErrores)
       .then((data) => {
-        if (data.codigo == 200) {
+        if (Number(data.codigo) >= 200 && Number(data.codigo) < 300) {
           setIsGuardando(false);
           MySwal.fire({
             title: "Correcto",

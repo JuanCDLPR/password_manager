@@ -1,51 +1,19 @@
 # Password Manager Web
 
-Cliente web de **Password Manager**, desarrollado con React. Incluye
-autenticación, perfil de usuario, control de sesión y administración de un
-catálogo personal de plataformas.
+Cliente React de **Password Manager**. Incluye autenticación, perfil, control de
+sesión y catálogo de plataformas.
 
 > [!IMPORTANT]
-> El proyecto aún está en desarrollo. Hoy no almacena credenciales de acceso:
-> las plataformas contienen únicamente nombre y URL. Los módulos de grupos,
-> accesos y dashboard no están completos.
+> Aún no guarda accesos ni contraseñas. Grupos, accesos y dashboard están
+> pendientes; no deben anunciarse como funciones terminadas.
 
-## Funcionalidades actuales
+## Funciones disponibles
 
 - Registro e inicio de sesión.
-- Sesión JWT almacenada en el navegador.
-- Contador de expiración y renovación manual de la sesión.
-- Consulta y edición de perfil e imagen por URL.
-- Cambio de contraseña.
+- Contador y renovación de JWT mediante POST seguro.
+- Perfil y cambio de contraseña.
 - CRUD de plataformas con búsqueda, ordenamiento y paginación local.
-- Diseño oscuro adaptable con Material UI y React Bootstrap.
-
-## Estado de los módulos
-
-| Módulo | Estado |
-| --- | --- |
-| Login y registro | Integrado con el backend |
-| Perfil y cambio de contraseña | Integrado con el backend |
-| Plataformas | Integrado con el backend |
-| Grupos | Interfaz creada; backend pendiente |
-| Accesos | Opción de menú; ruta y funcionalidad pendientes |
-| Dashboard | Contenido provisional |
-
-## Tecnologías
-
-- React 18 y Create React App
-- React Router 6
-- Material UI 5
-- React Bootstrap y Bootstrap 5
-- SweetAlert2
-- jwt-decode
-- moment-timezone
-
-## Requisitos
-
-- Node.js 18 o una versión LTS compatible.
-- npm.
-- La [API de Password Manager](https://github.com/JuanCDLPR/password_manager_back)
-  en ejecución.
+- Manejo HTTP centralizado y API configurable por entorno.
 
 ## Instalación
 
@@ -53,48 +21,63 @@ catálogo personal de plataformas.
 git clone https://github.com/JuanCDLPR/password_manager.git
 cd password_manager
 npm install
+```
+
+Copia `.env.example` como `.env`:
+
+```dotenv
+REACT_APP_API_URL=http://localhost:3024/
+```
+
+Inicia el backend en `3024` y después:
+
+```bash
 npm start
 ```
 
-En Windows, el script inicia el cliente en `http://localhost:3021`.
+El cliente inicia en `http://localhost:3021` en Windows.
 
-El frontend apunta actualmente a `http://localhost:3024/`, por lo que el
-backend debe ejecutarse con:
+## Módulos
 
-```dotenv
-PORT=3024
-```
+| Módulo | Estado |
+| --- | --- |
+| Login y registro | Integrado |
+| Perfil y contraseña | Integrado |
+| Plataformas | Integrado |
+| Grupos | UI sin backend |
+| Accesos | Pendiente |
+| Dashboard | Provisional |
 
-La URL está definida de forma fija en `src/context/backend.js`. Conviene
-reemplazarla por una variable de entorno antes de desplegar.
+## Tecnologías
+
+React 18, React Router 6, Material UI 5, React Bootstrap, SweetAlert2,
+`jwt-decode` y `moment-timezone`.
 
 ## Scripts
 
 | Comando | Descripción |
 | --- | --- |
-| `npm start` | Inicia el servidor de desarrollo en Windows |
-| `npm run build` | Genera el bundle de producción en `build/` |
-| `npm test` | Ejecuta las pruebas de Create React App |
+| `npm start` | Desarrollo en Windows |
+| `npm run build` | Bundle en `build/` |
+| `npm test` | Pruebas de Create React App |
 
-El repositorio no contiene todavía pruebas propias. El script `start` usa la
-sintaxis `set PORT=3021`, específica de Windows.
+El script `start` usa `set PORT=3021`, específico de Windows.
+En la validación del 30 de julio de 2026, `react-scripts build` no finalizó
+dentro del tiempo de prueba; la sintaxis Babel sí pasó y el servidor de
+desarrollo respondió HTTP 200. El build de producción requiere diagnóstico.
 
-## Estructura
+## Configuración de seguridad
 
-```text
-public/                Plantilla HTML, manifiesto, estilos y recursos públicos
-src/assets/            Imágenes e iconos
-src/context/           Cliente HTTP y almacenamiento local
-src/includes/          Menú y componentes compartidos
-src/lib/               Utilidades de UI
-src/modules/login/     Inicio de sesión
-src/modules/register/  Registro
-src/modules/perfil/    Perfil y cambio de contraseña
-src/modules/plataformas/ Catálogo de plataformas
-src/modules/grupos/    UI pendiente de soporte en backend
-server.js              Servidor estático del build
-ecosystem.config.js    Configuración PM2
-```
+- La URL ya no está fija en el código; utiliza `REACT_APP_API_URL`.
+- La renovación envía la contraseña en JSON mediante POST.
+- El cliente HTTP acepta respuestas 2xx y conserva errores del backend.
+- Al cerrar sesión solo elimina `JWT`, `nombre` y `user`.
+- El JWT aún vive en `localStorage`; una futura etapa debe migrarlo a cookie
+  HttpOnly junto con protección CSRF.
+
+No deben almacenarse secretos reales hasta implementar el diseño criptográfico
+de la bóveda descrito en la
+[documentación de seguridad](https://github.com/JuanCDLPR/password_manager_back/blob/main/docs/SEGURIDAD.md).
 
 ## Producción
 
@@ -103,29 +86,8 @@ npm run build
 node server.js
 ```
 
-El servidor usa `PORT` o `4001`. En el estado actual sirve archivos estáticos,
-pero no aplica fallback a `index.html` para rutas internas de React Router; una
-recarga directa en `/perfil` o `/plataformas` puede responder 404. Debe
-corregirse antes del despliegue.
-
-Existe configuración de PM2:
-
-```bash
-pm2 start ecosystem.config.js --env prod
-```
-
-## Consideraciones de seguridad
-
-- El JWT se guarda en `localStorage`; cualquier XSS podría leerlo.
-- La sesión se envía mediante un encabezado personalizado.
-- La renovación actual envía la contraseña en la URL.
-- No se deben almacenar contraseñas reales hasta resolver los hallazgos de
-  seguridad documentados en el backend.
-
-Consulta la
-[evaluación técnica completa](https://github.com/JuanCDLPR/password_manager_back/blob/main/docs/ESTADO-Y-MEJORAS.md)
-y la
-[referencia de la API](https://github.com/JuanCDLPR/password_manager_back/blob/main/docs/API.md).
+`server.js` todavía necesita fallback a `index.html` para que recargar rutas
+como `/perfil` no responda 404.
 
 ## Autores
 

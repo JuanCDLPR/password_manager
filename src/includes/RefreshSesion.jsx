@@ -3,7 +3,7 @@ import { Tooltip, Menu, MenuItem, IconButton, Alert } from "@mui/material";
 import HistoryIcon from "@mui/icons-material/History";
 import { getLocalStorageJWT, setLocalStorageJWT } from "../context/storaje";
 import { jwtDecode } from "jwt-decode";
-import { getData } from "../context/backend";
+import { postdData } from "../context/backend";
 import { MySwal, StyledSnackbar } from "../lib/GeneralesImports";
 import Trees from "../assets/trees.png";
 import NyanCat from "../assets/nyan-cat.gif";
@@ -109,13 +109,15 @@ const RefreshSesion = () => {
         imageAlt: "Custom image",
       }).then((result) => {
         if (result.value) {
-          getData(`usuarios/refresh?pass_confirm=${result.value}`)
+          postdData(
+            "usuarios/refresh",
+            { password: result.value },
+            { clearOnUnauthorized: false }
+          )
             .then((data) => {
               if (!data.error) {
-                //console.log(data.data);
-
-                setLocalStorageJWT(data.data[0]);
-                setToken(data.data[0]);
+                setLocalStorageJWT(data.data.data[0]);
+                setToken(data.data.data[0]);
               } else {
                 //setMensaje("No se pudo actualizar el token");
                 setMensaje(data.mensaje);

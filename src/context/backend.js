@@ -1,134 +1,79 @@
-import { getLocalStorageJWT, clearStorageJWT } from "./storaje";
+import { clearStorageJWT, getLocalStorageJWT } from "./storaje";
 
-export const BACKEND_URL = "http://localhost:3024/";
+const configuredUrl =
+  process.env.REACT_APP_API_URL || "http://localhost:3024/";
 
-export async function postdData(url, body) {
-  let bearer_token = getLocalStorageJWT();
-  return fetch(BACKEND_URL + url, {
-    method: "POST",
-    body: JSON.stringify(body),
-    headers: {
-      "Content-Type": "application/json",
-      Autorizacion: bearer_token,
-      Administracion: bearer_token,
-    },
-  })
-    .then((response) => {
-      if (response.status === 401) {
-        clearStorageJWT();
-      }
-      if (response.status !== 200) {
-        console.log(response);
-        return {
-          codigo: String(response.status),
-          mensaje: "Error: " + response.statusText,
-        };
-      }
-      return response.json();
-    })
-    .then((response) => {
-      if (response.codigo == 200) {
-        return { error: false, data: response };
-      } else {
-        return {
-          error: true,
-          mensaje: response.mensaje + " (" + response.codigo + ")",
-        };
-      }
-    })
-    .catch((error) => {
-      return {
-        error: true,
-        mensaje: "Error al conectar con los servidores (503)",
-      };
-    });
-}
+export const BACKEND_URL = configuredUrl.endsWith("/")
+  ? configuredUrl
+  : `${configuredUrl}/`;
 
-export const getData = async (url) => {
-  let bearer_token = getLocalStorageJWT();
-  return fetch(BACKEND_URL + url, {
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + bearer_token,
-      "Content-Type": "application/json",
-      Autorizacion: bearer_token,
-      Administracion: bearer_token,
-    },
-  })
-    .then((response) => {
-      //console.log(response);
-      if (response.status === 401) {
-        clearStorageJWT();
-      }
-      if (response.status !== 200) {
-        console.log(response);
-        return {
-          codigo: String(response.status),
-          mensaje: "Error: " + response.statusText,
-        };
-      }
-      return response.json();
-    })
-    .then((response) => {
-      //console.log(response);
-      if (response.codigo == 200) {
-        return { error: false, data: response.data };
-      } else {
-        return {
-          error: true,
-          mensaje: response.mensaje + " (" + response.codigo + ")",
-        };
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-      return {
-        error: true,
-        mensaje: "Error al conectar con los servidores (503)",
-      };
-    });
+const isSuccessCode = (code) => {
+  const numericCode = Number(code);
+  return numericCode >= 200 && numericCode < 300;
 };
 
-export function postUrl(url) {
-  let bearer_token = getLocalStorageJWT();
-  return fetch(BACKEND_URL + url, {
-    method: "POST",
-    headers: {
-      Authorization: "Bearer " + bearer_token,
-      "Content-Type": "application/json",
-      Administracion: bearer_token,
-    },
-  })
-    .then((response) => {
-      if (response.status === 401) {
-        clearStorageJWT();
-      }
-      if (response.status != 200) {
-        console.log(response);
-        return {
-          resp: {
-            codigo: String(response.status),
-            mensaje: "Error: " + response.statusText,
-          },
-        };
-      }
-      return response.json();
-    })
-    .then((response) => {
-      if (response.codigo == 200) {
-        return { error: false, data: response };
-      } else {
-        return {
-          error: true,
-          mensaje: response.mensaje + " (" + response.codigo + ")",
-        };
-      }
-    })
-    .catch((error) => {
-      console.log(error);
+const request = async (
+  url,
+  { method = "GET", body, clearOnUnauthorized = true } = {}
+) => {
+  const token = getLocalStorageJWT();
+
+  try {
+    const response = await fetch(BACKEND_URL + url, {
+      method,
+      body: body === undefined ? undefined : JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { Administracion: token }),
+      },
+    });
+
+    const payload = await response.json().catch(() => ({
+      codigo: response.status,
+      mensaje: "El servidor devolvió una respuesta no válida",
+    }));
+
+    if (response.status === 401 && clearOnUnauthorized) {
+      clearStorageJWT();
+    }
+
+    if (!response.ok || !isSuccessCode(payload.codigo)) {
       return {
         error: true,
-        mensaje: "Error al conectar con los servidores (503)",
+        codigo: payload.codigo || response.status,
+        mensaje:
+          payload.mensaje ||
+          `Error al comunicarse con el servidor (${response.status})`,
       };
-    });
-}
+    }
+
+    return { error: false, payload };
+  } catch {
+    return {
+      error: true,
+      codigo: 503,
+      mensaje: "Error al conectar con los servidores (503)",
+    };
+  }
+};
+
+export const postdData = async (url, body, options = {}) => {
+  const result = await request(url, { method: "POST", body, ...options });
+  return result.error
+    ? result
+    : { error: false, data: result.payload };
+};
+
+export const getData = async (url, options = {}) => {
+  const result = await request(url, { method: "GET", ...options });
+  return result.error
+    ? result
+    : { error: false, data: result.payload.data };
+};
+
+export const postUrl = async (url, options = {}) => {
+  const result = await request(url, { method: "POST", ...options });
+  return result.error
+    ? result
+    : { error: false, data: result.payload };
+};
