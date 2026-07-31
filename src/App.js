@@ -15,13 +15,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import NotFound from "./includes/NotFound";
 import { api } from "./context/backend";
 
-const darkTheme = createTheme({
-  palette: {
-    mode: "dark",
-  },
-});
-
-const authTheme = createTheme({
+const brandThemeOptions = {
   palette: {
     mode: "dark",
     primary: {
@@ -47,20 +41,54 @@ const authTheme = createTheme({
   components: {
     MuiButton: {
       styleOverrides: {
-        root: {
-          borderRadius: 10,
-        },
+        root: { borderRadius: 10 },
       },
     },
     MuiOutlinedInput: {
       styleOverrides: {
+        root: { borderRadius: 12 },
+      },
+    },
+  },
+};
+
+const darkTheme = createTheme({
+  ...brandThemeOptions,
+  components: {
+    ...brandThemeOptions.components,
+    MuiAppBar: {
+      styleOverrides: {
         root: {
-          borderRadius: 12,
+          backgroundColor: "rgba(12, 23, 39, .96)",
+          backgroundImage: "none",
+          borderBottom: "1px solid rgba(148, 163, 184, .14)",
+          boxShadow: "none",
+        },
+      },
+    },
+    MuiDrawer: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: "#091524",
+          backgroundImage: "none",
+          borderRight: "1px solid rgba(148, 163, 184, .14)",
+        },
+      },
+    },
+    MuiTableCell: {
+      styleOverrides: {
+        head: {
+          color: "#94a3b8",
+          fontSize: ".72rem",
+          fontWeight: 800,
+          letterSpacing: ".08em",
         },
       },
     },
   },
 });
+
+const authTheme = createTheme(brandThemeOptions);
 
 function App() {
   const [isLoged, setIsLoged] = useState(false);

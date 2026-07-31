@@ -1,215 +1,264 @@
+import React, { useEffect, useState } from "react";
 import {
-  Grid,
+  Alert,
+  Avatar,
+  Box,
+  Button,
+  Chip,
+  CircularProgress,
+  IconButton,
+  Paper,
+  Stack,
+  Table,
   TableBody,
   TableCell,
   TableContainer,
   TableFooter,
   TableHead,
-  TableRow,
   TablePagination,
-  Paper,
+  TableRow,
   Tooltip,
-  IconButton,
+  Typography,
 } from "@mui/material";
-import React from "react";
-import { Table } from "react-bootstrap";
-import { MySwal, TablePaginationActions } from "../../../lib/GeneralesImports";
-import { Link } from "react-router-dom";
-import Loading from "../../../includes/Loading";
-import AvatarDefault from "../../../includes/AvatarDefault";
+import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import InboxOutlinedIcon from "@mui/icons-material/InboxOutlined";
+import LanguageRoundedIcon from "@mui/icons-material/LanguageRounded";
 import moment from "moment-timezone";
-import AccEditarWhite from "../../../assets/AccEditarWhite.svg";
-import AccEliminar from "../../../assets/AccEliminar.svg";
+import { Link } from "react-router-dom";
+import { MySwal, TablePaginationActions } from "../../../lib/GeneralesImports";
 import { Eliminar } from "../functions/plataformas";
 
-export default function Tabla({ Lista, IsLoading, setLista }) {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(15);
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - Lista.length) : 0;
+const formatDate = (date) =>
+  date
+    ? moment(date).tz("America/Mexico_City").format("DD MMM YYYY")
+    : "Sin fecha";
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+function PlatformAvatar({ name, src, size = 42 }) {
+  return (
+    <Avatar
+      src={src || undefined}
+      alt={name}
+      sx={{
+        bgcolor: "rgba(99, 102, 241, .15)",
+        border: "1px solid rgba(129, 140, 248, .24)",
+        color: "primary.light",
+        height: size,
+        width: size,
+      }}
+    >
+      <LanguageRoundedIcon fontSize={size > 42 ? "large" : "small"} />
+    </Avatar>
+  );
+}
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-    console.log(page);
-  };
+export default function Tabla({
+  Lista,
+  IsLoading,
+  error = "",
+  onRetry,
+  setLista,
+}) {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
+  const visibleRows =
+    rowsPerPage > 0
+      ? Lista.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+      : Lista;
 
-  const EliminarRegistro = (id) => {
+  useEffect(() => {
+    const lastPage = Math.max(0, Math.ceil(Lista.length / rowsPerPage) - 1);
+    if (rowsPerPage > 0 && page > lastPage) setPage(lastPage);
+  }, [Lista.length, page, rowsPerPage]);
+
+  const handleDelete = (id, name) => {
     MySwal.fire({
-      title: "¿Estas seguro de eliminar esta actividad?",
-      text: "esta acción no se puede deshacer",
+      title: "¿Eliminar plataforma?",
+      text: `${name} dejará de aparecer en tu catálogo. Esta acción no se puede deshacer.`,
       icon: "warning",
-      showDenyButton: true,
-      denyButtonText: "No, cancelar",
-      confirmButtonText: "Si, estoy seguro",
-      confirmButtonColor: "#3ABE88",
-      denyButtonColor: "#65748B",
+      showCancelButton: true,
+      cancelButtonText: "Cancelar",
+      confirmButtonText: "Sí, eliminar",
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#475569",
       reverseButtons: true,
-      background: "#333333",
-      color: "#FFFFFF",
-    }).then(function (isConfirm) {
-      if (isConfirm.isConfirmed) {
-        if (id != undefined) {
-          Eliminar(id)
-            .then((resp) => {
-              MySwal.fire({
-                title: "Exito!",
-                text: "Eliminado correctamente",
-                icon: "success",
-                background: "#333333",
-                color: "#FFFFFF",
-              }).then(function () {
-                eliminarClienteDeTabla(id);
-              });
-            })
-            .catch((error) => {
-              MySwal.fire({
-                title: "Error!",
-                text: error.message,
-                icon: "error",
-                background: "#333333",
-                color: "#FFFFFF",
-              });
-            });
-        }
-      }
+      background: "#0c1727",
+      color: "#f8fafc",
+    }).then(({ isConfirmed }) => {
+      if (!isConfirmed || !id) return;
+
+      Eliminar(id)
+        .then(() => {
+          setLista((current) => current.filter((item) => item._id !== id));
+          MySwal.fire({
+            title: "Plataforma eliminada",
+            icon: "success",
+            timer: 1800,
+            showConfirmButton: false,
+            background: "#0c1727",
+            color: "#f8fafc",
+          });
+        })
+        .catch((deleteError) => {
+          MySwal.fire({
+            title: "No se pudo eliminar",
+            text: deleteError.message,
+            icon: "error",
+            background: "#0c1727",
+            color: "#f8fafc",
+          });
+        });
     });
   };
 
-  const eliminarClienteDeTabla = (id) => {
-    const filteredLibraries = Lista.filter((item) => {
-      return item._id !== id;
-    });
-    setLista(filteredLibraries);
-  };
+  if (error) {
+    return (
+      <Alert
+        severity="error"
+        action={
+          <Button color="inherit" size="small" onClick={onRetry}>
+            Reintentar
+          </Button>
+        }
+      >
+        {error}
+      </Alert>
+    );
+  }
+
+  if (IsLoading) {
+    return (
+      <Paper variant="outlined" sx={{ borderRadius: 3, py: 8, textAlign: "center" }}>
+        <CircularProgress size={30} />
+        <Typography color="text.secondary" sx={{ mt: 2 }}>
+          Consultando plataformas…
+        </Typography>
+      </Paper>
+    );
+  }
+
+  if (Lista.length === 0) {
+    return (
+      <Paper
+        variant="outlined"
+        sx={{ borderRadius: 3, px: 3, py: 8, textAlign: "center" }}
+      >
+        <InboxOutlinedIcon sx={{ color: "text.secondary", fontSize: 48 }} />
+        <Typography variant="h6" fontWeight={800} sx={{ mt: 1.5 }}>
+          No encontramos plataformas
+        </Typography>
+        <Typography color="text.secondary" sx={{ mt: 0.75 }}>
+          Crea una nueva o cambia los criterios de búsqueda.
+        </Typography>
+      </Paper>
+    );
+  }
 
   return (
-    <>
-      <TableContainer component={Paper}>
-        <Table aria-label="custom pagination table">
+    <Paper variant="outlined" sx={{ borderRadius: 3, overflow: "hidden" }}>
+      <Stack spacing={1.5} sx={{ display: { xs: "flex", md: "none" }, p: 2 }}>
+        {visibleRows.map((row) => (
+          <Paper
+            key={row._id}
+            variant="outlined"
+            sx={{ bgcolor: "rgba(15, 23, 42, .5)", borderRadius: 2.5, p: 2 }}
+          >
+            <Stack direction="row" spacing={1.5} alignItems="center">
+              <PlatformAvatar name={row.name} src={row.url} size={48} />
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography fontWeight={800} noWrap>
+                  {row.name}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {formatDate(row.fecha)}
+                </Typography>
+              </Box>
+              <Tooltip title="Editar">
+                <IconButton component={Link} to={`./edit/${row._id}`} color="primary">
+                  <EditOutlinedIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Eliminar">
+                <IconButton color="error" onClick={() => handleDelete(row._id, row.name)}>
+                  <DeleteOutlineRoundedIcon />
+                </IconButton>
+              </Tooltip>
+            </Stack>
+          </Paper>
+        ))}
+      </Stack>
+
+      <TableContainer sx={{ display: { xs: "none", md: "block" } }}>
+        <Table aria-label="Listado de plataformas">
           <TableHead>
             <TableRow>
-              <TableCell
-                className="d-none d-sm-table-cell font-Avenir font-AvenirBold"
-                align="left"
-              >
-                FECHA
-              </TableCell>
-              <TableCell className="font-Avenir font-AvenirBold" align="left">
-                NOMBRE
-              </TableCell>
-
-              <TableCell className="font-Avenir font-AvenirBold" align="left">
-                AVATAR
-              </TableCell>
-
-              <TableCell className="font-Avenir font-AvenirBold" align="right">
-                ACCIONES
-              </TableCell>
+              <TableCell>PLATAFORMA</TableCell>
+              <TableCell>FECHA DE REGISTRO</TableCell>
+              <TableCell>ESTADO</TableCell>
+              <TableCell align="right">ACCIONES</TableCell>
             </TableRow>
           </TableHead>
-
-          {IsLoading ? (
-            <TableBody>
-              <TableRow>
-                <TableCell component="th" scope="row" colSpan={12}>
-                  <Loading />
+          <TableBody>
+            {visibleRows.map((row) => (
+              <TableRow key={row._id} hover>
+                <TableCell>
+                  <Stack direction="row" spacing={1.5} alignItems="center">
+                    <PlatformAvatar name={row.name} src={row.url} />
+                    <Box sx={{ minWidth: 0 }}>
+                      <Typography fontWeight={750}>{row.name}</Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        Servicio registrado
+                      </Typography>
+                    </Box>
+                  </Stack>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="body2" color="text.secondary">
+                    {formatDate(row.fecha)}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Chip label="Disponible" color="success" size="small" variant="outlined" />
+                </TableCell>
+                <TableCell align="right">
+                  <Tooltip title="Editar plataforma">
+                    <IconButton component={Link} to={`./edit/${row._id}`} color="primary">
+                      <EditOutlinedIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Eliminar plataforma">
+                    <IconButton color="error" onClick={() => handleDelete(row._id, row.name)}>
+                      <DeleteOutlineRoundedIcon />
+                    </IconButton>
+                  </Tooltip>
                 </TableCell>
               </TableRow>
-            </TableBody>
-          ) : (
-            <TableBody>
-              {(rowsPerPage > 0
-                ? Lista.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
-                  )
-                : Lista
-              ).map((row, index) => (
-                <TableRow key={row._id}>
-                  <TableCell
-                    component="th"
-                    scope="row"
-                    className="d-none d-sm-table-cell"
-                  >
-                    {
-                      moment(row.fecha)
-                        .tz("America/Mexico_City")
-                        .format("YYYY-MM-DD")
-                      //.format("YYYY-MM-DD h:mm:ss a")
-                      //.format("YYYY-MM-DD HH:mm:ss")
-                    }
-                  </TableCell>
-                  <TableCell component="th" scope="row" className="">
-                    {row.name}
-                  </TableCell>
-
-                  <TableCell component="th" scope="row" className="">
-                    <AvatarDefault src={row.url} />
-                  </TableCell>
-
-                  <TableCell align="right">
-                    <Grid key={row._id} className="">
-                      <Link
-                        to={"./edit/" + row._id}
-                        style={{ textDecoration: "none" }}
-                      >
-                        <Tooltip title="Editar" placement="top">
-                          <IconButton>
-                            <img src={AccEditarWhite} alt="" />
-                          </IconButton>
-                        </Tooltip>
-                      </Link>
-                      <Tooltip title="Eliminar" placement="top">
-                        <IconButton onClick={() => EliminarRegistro(row._id)}>
-                          <img src={AccEliminar} alt="" />
-                        </IconButton>
-                      </Tooltip>
-                    </Grid>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          )}
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                rowsPerPageOptions={[
-                  15,
-                  30,
-                  100,
-                  { label: "Todos", value: -1 },
-                ]}
-                count={Lista.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                SelectProps={{
-                  inputProps: {
-                    "aria-label": "Filas por pagína",
-                  },
-                  native: true,
-                }}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                ActionsComponent={TablePaginationActions}
-                labelRowsPerPage={"Registros por página"}
-                labelDisplayedRows={({ from, to, count, page }) => {
-                  return `${from} - ${to} de ${count}`;
-                }}
-              />
-            </TableRow>
-          </TableFooter>
+            ))}
+          </TableBody>
         </Table>
       </TableContainer>
-    </>
+
+      <TableFooter component="div">
+        <TablePagination
+          component="div"
+          rowsPerPageOptions={[15, 30, 100, { label: "Todos", value: -1 }]}
+          count={Lista.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          SelectProps={{
+            inputProps: { "aria-label": "Registros por página" },
+            native: true,
+          }}
+          onPageChange={(_, newPage) => setPage(newPage)}
+          onRowsPerPageChange={(event) => {
+            setRowsPerPage(parseInt(event.target.value, 10));
+            setPage(0);
+          }}
+          ActionsComponent={TablePaginationActions}
+          labelRowsPerPage="Registros por página"
+          labelDisplayedRows={({ from, to, count }) => `${from}–${to} de ${count}`}
+        />
+      </TableFooter>
+    </Paper>
   );
 }

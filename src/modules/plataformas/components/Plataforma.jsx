@@ -5,270 +5,278 @@ import {
   Avatar,
   Box,
   Button,
-  Card,
-  CardContent,
+  CircularProgress,
+  Container,
+  Divider,
+  Paper,
   Snackbar,
   Stack,
-  styled,
-  Tab,
-  Tabs,
   TextField,
+  Typography,
 } from "@mui/material";
-import { Col, Row } from "react-bootstrap";
+import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
+import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
+import LanguageRoundedIcon from "@mui/icons-material/LanguageRounded";
+import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
 import { useNavigate, useParams } from "react-router-dom";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import ButtonBack from "../../../includes/ButtonBack";
-import { getInfoPlataforma, guardar } from "../functions/plataformas";
-import AvatarDefault from "../../../includes/AvatarDefault";
-
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
+import { getInfoPlataforma, guardar } from "../functions/plataformas";
 
 const MySwal = withReactContent(Swal);
 
 export default function Plataforma() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [IsLoading, setIsLoading] = useState(true);
-  const [IsGuardando, setIsGuardando] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [mensaje, setMensaje] = useState("");
-
-  const [Values, setValues] = useState({
+  const isEditing = Boolean(id);
+  const [isLoading, setIsLoading] = useState(isEditing);
+  const [isSaving, setIsSaving] = useState(false);
+  const [message, setMessage] = useState("");
+  const [values, setValues] = useState({
     id: id ?? "0",
     nombre: "",
     url: "",
   });
+  const [errors, setErrors] = useState({ nombre: false, url: false });
 
-  const [Errores, setErrores] = useState({
-    nombre: false,
-    url: false,
-  });
-
-  const handleClose = () => {
-    setOpen(false);
+  const handleInputChange = ({ target }) => {
+    const { name, value } = target;
+    setValues((current) => ({ ...current, [name]: value }));
+    setErrors((current) => ({ ...current, [name]: false }));
   };
 
-  const handlInputChange = ({ target }) => {
-    const Name = target.name;
-    const Value = target.value;
-    let NewValue = {
-      ...Values,
-      [Name]: Value,
-    };
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (isSaving) return;
 
-    /* if (Name == "nombre") {
-      NewValue = { ...NewValue, [Name]: Value.removeAccents() };
-    } */
-
-    if (Name == "url") {
-      if (Value.length > 200) {
-        NewValue = { ...NewValue, [Name]: "" };
-      }
+    if (values.url.length > 200) {
+      setErrors((current) => ({ ...current, url: true }));
+      return;
     }
 
-    setValues(NewValue);
-    setErrores({
-      ...Errores,
-      [Name]: false,
-    });
-  };
+    setIsSaving(true);
+    setMessage("");
 
-  const Guardar = () => {
-    setIsGuardando(true);
-    guardar(Values, Errores, setErrores)
-      .then((data) => {
-        setIsGuardando(false);
-        MySwal.fire({
-          title: "Correcto",
-          html: data.message,
-          icon: "success",
-          confirmButtoColor: "#3ABE88",
-          showConfirmButton: false,
-          timer: 12700,
-          background: "#333333",
-          color: "#FFFFFF",
-        }).then(() => navigate(-1));
-      })
-      .catch((error) => {
-        setMensaje(error.message);
-        setOpen(true);
-        setIsGuardando(false);
+    try {
+      const data = await guardar(values, errors, setErrors);
+      await MySwal.fire({
+        title: isEditing ? "Cambios guardados" : "Plataforma creada",
+        text: data.message,
+        icon: "success",
+        confirmButtonColor: "#6366f1",
+        background: "#0c1727",
+        color: "#f8fafc",
       });
+      navigate(-1);
+    } catch (error) {
+      setMessage(error.message);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   useEffect(() => {
-    setIsLoading(true);
+    if (!id) return;
 
-    if (id != undefined) {
-      getInfoPlataforma(id)
-        .then((resp) => {
-          setValues(resp.Values);
-        })
-        .catch((error) => {
-          MySwal.fire({
-            title: "Error",
-            html: error.message,
-            icon: "error",
-            confirmButtonColor: "#3ABE88",
-            showConfirmButton: true,
-            allowEscapeKey: false,
-            allowEnterKey: false,
-            allowOutsideClick: false,
-            background: "#333333",
-            color: "#FFFFFF",
-          }).then(() => {
-            navigate(-1);
-          });
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    } else {
-      setIsLoading(false);
-    }
-  }, []);
-  const StyledSnackbar = styled((props) => <Snackbar {...props} />)(
-    ({ theme }) => ({
-      "& .MuiSnackbar-root": {
-        top: theme.spacing(15),
-      },
-    })
-  );
+    setIsLoading(true);
+    getInfoPlataforma(id)
+      .then((response) => setValues(response.Values))
+      .catch((error) => {
+        MySwal.fire({
+          title: "No se pudo abrir la plataforma",
+          text: error.message,
+          icon: "error",
+          confirmButtonColor: "#6366f1",
+          allowEscapeKey: false,
+          allowOutsideClick: false,
+          background: "#0c1727",
+          color: "#f8fafc",
+        }).then(() => navigate(-1));
+      })
+      .finally(() => setIsLoading(false));
+  }, [id, navigate]);
 
   return (
-    <>
-      <StyledSnackbar
-        direction="right"
-        open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      >
-        <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
-          {mensaje}
-        </Alert>
-      </StyledSnackbar>
-
-      <ButtonBack title="Plataformas" onClick={() => navigate(-1)} />
-
-      <Card elevation={3} className="mb-4">
-        <CardContent className="p-0">
-          <div className="p-3">
-            <h6 className="mb-0 text-left font-AvenirBold">
-              {id ? "Editar plataforma" : "Nueva plataforma"}
-            </h6>
-          </div>
-          <hr
-            style={{ backgroundColor: "#DFDEE0", height: "1px", opacity: "1" }}
-            className="m-0 p-0"
-          />
-
-          <Row className="p-3">
-            <Col sm={12} md={6} className="p-3">
-              <TextField
-                fullWidth
-                name="nombre"
-                label="Nombre"
-                variant="outlined"
-                value={Values.nombre}
-                error={Errores.nombre}
-                onChange={handlInputChange}
-              />
-            </Col>
-            <Col sm={12} md={6} className="p-3">
-              <div className="d-flex justify-content-start align-items-center h-100 ps-5">
-                {Values.url !== "" && <AvatarDefault src={Values.url} />}
-              </div>
-            </Col>
-
-            {/*   <Col sm={12} md={12} className="p-3">
-                 <label for="file" class="custum-file-upload">
-                <div class="icon">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill=""
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g
-                      id="SVGRepo_tracerCarrier"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    ></g>
-                    <g id="SVGRepo_iconCarrier">
-                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M10 1C9.73478 1 9.48043 1.10536 9.29289 1.29289L3.29289 7.29289C3.10536 7.48043 3 7.73478 3 8V20C3 21.6569 4.34315 23 6 23H7C7.55228 23 8 22.5523 8 22C8 21.4477 7.55228 21 7 21H6C5.44772 21 5 20.5523 5 20V9H10C10.5523 9 11 8.55228 11 8V3H18C18.5523 3 19 3.44772 19 4V9C19 9.55228 19.4477 10 20 10C20.5523 10 21 9.55228 21 9V4C21 2.34315 19.6569 1 18 1H10ZM9 7H6.41421L9 4.41421V7ZM14 15.5C14 14.1193 15.1193 13 16.5 13C17.8807 13 19 14.1193 19 15.5V16V17H20C21.1046 17 22 17.8954 22 19C22 20.1046 21.1046 21 20 21H13C11.8954 21 11 20.1046 11 19C11 17.8954 11.8954 17 13 17H14V16V15.5ZM16.5 11C14.142 11 12.2076 12.8136 12.0156 15.122C10.2825 15.5606 9 17.1305 9 19C9 21.2091 10.7909 23 13 23H20C22.2091 23 24 21.2091 24 19C24 17.1305 22.7175 15.5606 20.9844 15.122C20.7924 12.8136 18.858 11 16.5 11Z"
-                        fill=""
-                      ></path>
-                    </g>
-                  </svg>
-                </div>
-                <div class="text">
-                  <span>
-                    {selectedFile !== null
-                      ? selectedFile.name
-                      : "Click para subir imagenes"}
-                  </span>
-                </div>
-                <input
-                  id="file"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  multiple={false}
-                />
-              </label> 
-            </Col> */}
-
-            <Col sm={12} md={12} className="p-3 ">
-              <TextField
-                fullWidth
-                name="url"
-                label="Url Imagen"
-                variant="outlined"
-                helperText={Errores.url ? "inválido" : ""}
-                value={Values.url}
-                error={Errores.url}
-                onChange={handlInputChange}
-                multiline
-                rows={2}
-              />
-            </Col>
-          </Row>
-          <Stack
-            className="p-3"
-            spacing={2}
-            direction={{ xs: "column", sm: "row" }}
-            //style={{}}
-          >
-            <LoadingButton
-              loading={IsGuardando}
-              loadingPosition="start"
-              disabled={IsLoading}
-              onClick={() => Guardar()}
-              className="btn btn-create font-AvenirMedium  py-2 px-4 "
-              variant="contained"
-              xs={{ with: "100$" }}
-              startIcon={<></>}
-              endIcon={<></>}
-            >
-              <span className={IsGuardando ? "px-4" : "px-2"}>
-                {IsGuardando ? "Guardando..." : id ? "Guardar" : "Crear"}
-              </span>
-            </LoadingButton>
+    <Box sx={{ minHeight: "calc(100dvh - 112px)", py: { xs: 2, md: 4 } }}>
+      <Container maxWidth="lg" disableGutters>
+        <Stack spacing={3}>
+          <Box>
             <Button
               onClick={() => navigate(-1)}
-              className="btn btn-cancel font-AvenirMedium py-2 px-4"
-              variant="outlined"
+              startIcon={<ArrowBackRoundedIcon />}
+              sx={{ mb: 2, textTransform: "none" }}
             >
-              Cancelar
+              Volver a plataformas
             </Button>
-          </Stack>
-        </CardContent>
-      </Card>
-    </>
+            <Typography component="h1" variant="h4" fontWeight={800}>
+              {isEditing ? "Editar plataforma" : "Nueva plataforma"}
+            </Typography>
+            <Typography color="text.secondary" sx={{ mt: 0.75 }}>
+              {isEditing
+                ? "Actualiza la identidad visual y los datos del servicio."
+                : "Registra un servicio para relacionarlo con tus accesos."}
+            </Typography>
+          </Box>
+
+          <Paper
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            variant="outlined"
+            sx={{ borderRadius: 3, overflow: "hidden" }}
+          >
+            <Box sx={{ p: { xs: 2.5, md: 3.5 } }}>
+              <Stack direction="row" spacing={1.5} alignItems="center">
+                <Box
+                  sx={{
+                    alignItems: "center",
+                    bgcolor: "rgba(99, 102, 241, .14)",
+                    borderRadius: 2,
+                    color: "primary.light",
+                    display: "flex",
+                    height: 42,
+                    justifyContent: "center",
+                    width: 42,
+                  }}
+                >
+                  <LanguageRoundedIcon />
+                </Box>
+                <Box>
+                  <Typography variant="h6" fontWeight={800}>
+                    Información de la plataforma
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    El nombre es obligatorio; el icono es opcional.
+                  </Typography>
+                </Box>
+              </Stack>
+            </Box>
+            <Divider />
+
+            {isLoading ? (
+              <Stack alignItems="center" spacing={2} sx={{ py: 10 }}>
+                <CircularProgress size={32} />
+                <Typography color="text.secondary">Cargando información…</Typography>
+              </Stack>
+            ) : (
+              <Box
+                sx={{
+                  display: "grid",
+                  gap: { xs: 3, md: 5 },
+                  gridTemplateColumns: { xs: "1fr", md: "minmax(0, 1.35fr) minmax(260px, .65fr)" },
+                  p: { xs: 2.5, md: 3.5 },
+                }}
+              >
+                <Stack spacing={3}>
+                  <TextField
+                    autoFocus
+                    fullWidth
+                    name="nombre"
+                    label="Nombre de la plataforma"
+                    placeholder="Ej. GitHub, Google o Microsoft"
+                    value={values.nombre}
+                    error={errors.nombre}
+                    helperText={errors.nombre ? "Ingresa un nombre." : "Así identificarás el servicio en el sistema."}
+                    onChange={handleInputChange}
+                    inputProps={{ maxLength: 100 }}
+                  />
+                  <TextField
+                    fullWidth
+                    name="url"
+                    label="URL del icono"
+                    placeholder="https://ejemplo.com/icono.png"
+                    value={values.url}
+                    error={errors.url}
+                    helperText={
+                      errors.url
+                        ? "La URL no es válida o supera los 200 caracteres."
+                        : "Usa una imagen HTTPS cuadrada para obtener mejores resultados."
+                    }
+                    onChange={handleInputChange}
+                    multiline
+                    minRows={2}
+                    inputProps={{ maxLength: 201 }}
+                  />
+                </Stack>
+
+                <Paper
+                  variant="outlined"
+                  sx={{
+                    alignItems: "center",
+                    bgcolor: "rgba(15, 23, 42, .5)",
+                    borderRadius: 3,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    minHeight: 220,
+                    p: 3,
+                    textAlign: "center",
+                  }}
+                >
+                  <Avatar
+                    src={values.url || undefined}
+                    alt={values.nombre || "Vista previa"}
+                    sx={{
+                      bgcolor: "rgba(99, 102, 241, .16)",
+                      border: "1px solid rgba(129, 140, 248, .3)",
+                      color: "primary.light",
+                      height: 88,
+                      width: 88,
+                    }}
+                  >
+                    <ImageOutlinedIcon sx={{ fontSize: 38 }} />
+                  </Avatar>
+                  <Typography fontWeight={800} sx={{ mt: 2 }}>
+                    {values.nombre.trim() || "Vista previa"}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                    Así se mostrará en el catálogo.
+                  </Typography>
+                </Paper>
+              </Box>
+            )}
+
+            <Divider />
+            <Stack
+              direction={{ xs: "column-reverse", sm: "row" }}
+              justifyContent="flex-end"
+              spacing={1.5}
+              sx={{ p: { xs: 2.5, md: 3 } }}
+            >
+              <Button
+                disabled={isSaving}
+                onClick={() => navigate(-1)}
+                variant="outlined"
+                sx={{ minWidth: 120, textTransform: "none" }}
+              >
+                Cancelar
+              </Button>
+              <LoadingButton
+                loading={isSaving}
+                loadingPosition="start"
+                disabled={isLoading}
+                startIcon={<SaveOutlinedIcon />}
+                type="submit"
+                variant="contained"
+                sx={{ minWidth: 170, textTransform: "none", fontWeight: 800 }}
+              >
+                {isEditing ? "Guardar cambios" : "Crear plataforma"}
+              </LoadingButton>
+            </Stack>
+          </Paper>
+        </Stack>
+      </Container>
+
+      <Snackbar
+        open={Boolean(message)}
+        autoHideDuration={6000}
+        onClose={() => setMessage("")}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert onClose={() => setMessage("")} severity="error" variant="filled">
+          {message}
+        </Alert>
+      </Snackbar>
+    </Box>
   );
 }

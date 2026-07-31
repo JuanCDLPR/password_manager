@@ -19,7 +19,8 @@ sesión y catálogo de plataformas.
   disponibles de la futura bóveda cifrada.
 - Contador y renovación de JWT mediante POST seguro.
 - Perfil y cambio de contraseña.
-- CRUD de plataformas con búsqueda, ordenamiento y paginación local.
+- CRUD de plataformas con catálogo responsive, búsqueda, ordenamiento,
+  paginación y estados de carga, error y lista vacía.
 - Manejo HTTP centralizado y API configurable por entorno.
 - Cliente reutilizable `api.get/post/patch/delete`.
 - Errores `ApiError` con estado, código, detalles e identificador de solicitud.
@@ -71,9 +72,9 @@ React 18, React Router 6, Material UI 5, React Bootstrap, SweetAlert2,
 | `npm test` | Pruebas de Create React App |
 
 El script `start` usa `set PORT=3021`, específico de Windows.
-En la validación del 30 de julio de 2026, `react-scripts build` no finalizó
-dentro del tiempo de prueba; la sintaxis Babel sí pasó y el servidor de
-desarrollo respondió HTTP 200. El build de producción requiere diagnóstico.
+En la validación del 31 de julio de 2026, las pruebas y el bundle de producción
+finalizaron correctamente. Create React App conserva advertencias de lint en
+componentes heredados que deben atenderse de forma gradual.
 El árbol heredado de Create React App también reporta 80 vulnerabilidades en
 `npm audit`; deben resolverse mediante una migración controlada, no con
 `npm audit fix --force`.
